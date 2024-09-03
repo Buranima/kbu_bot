@@ -1,41 +1,39 @@
 from flask import Flask, render_template
 import mysql.connector
 import json
+import os
+
+# โหลดข้อมูลจากไฟล์ JSON
+with open('static/json/database_config.json', 'r') as file:
+    config = json.load(file)
 
 # เชื่อมต่อกับฐานข้อมูล
 conn = mysql.connector.connect(
-    host="localhost",  # หรือ IP ของเซิร์ฟเวอร์
-    user="root",
-    password="1234",
-    database="kbu_bot",
-    charset='utf8mb4',
-    collation='utf8mb4_unicode_ci'
+    host=config["host"][0],
+    user=config["user"][0],
+    password=config["password"][0],
+    database=config["database"][0],
+    charset=config["charset"][0],
+    collation=config["collation"][0]
 )
 
 cursor = conn.cursor()
 
-# ดึงข้อมูลจากฐานข้อมูล
-cursor.execute("SELECT name_sound FROM sound")
-rows = cursor.fetchall()
+# ระบุเส้นทางของโฟลเดอร์ที่ต้องการอ่าน
+folder_path = 'static/sound'
 
-# สร้างรายการในรูปแบบที่ต้องการ
-sound_list = [row[0] for row in rows]
+# อ่านรายการไฟล์ในโฟลเดอร์
+file_list = os.listdir(folder_path)
 
-# สร้างโครงสร้าง JSON
-json_data = {
-    "sound_list": sound_list
-}
+# สร้างโครงสร้างข้อมูล JSON
+sound_list = {"sound_list": [f"static/sound/{file_name}" for file_name in file_list]}
 
 # ระบุเส้นทางที่ต้องการบันทึกไฟล์
-file_path = 'static/json/sound_list.json'
+json_file_path = 'static/json/sound_list.json'
 
-# บันทึกเป็นไฟล์ JSON ในตำแหน่งที่กำหนด
-with open(file_path, 'w') as json_file:
-    json.dump(json_data, json_file, indent=4)
-
-# ปิดการเชื่อมต่อกับฐานข้อมูล
-cursor.close()
-conn.close()
+# บันทึกข้อมูลเป็นไฟล์ JSON
+with open(json_file_path, 'w') as json_file:
+    json.dump(sound_list, json_file, indent=4)
 
 app = Flask(__name__)
 

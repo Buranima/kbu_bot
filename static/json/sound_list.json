@@ -1,7 +1,7 @@
 {
     "sound_list": [
+        "static/sound/engineering_KBU.mp3",
         "static/sound/march_KBU.mp3",
-        "static/sound/open_house_KBU.mp3",
-        "static/sound/engineering_KBU.mp3"
+        "static/sound/open_house_KBU.mp3"
     ]
 }
