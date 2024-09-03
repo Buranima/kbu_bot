@@ -1,0 +1,6 @@
+{
+    "extension_install": [
+        "Flask",
+        "mysql-connector-python"
+    ]
+}
