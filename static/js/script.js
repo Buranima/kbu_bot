@@ -1,10 +1,11 @@
+// Function to start the animation and play random songs
 function startAnimation() {
     document.querySelector('.start-button').style.display = 'none';
     document.querySelector('.face').style.display = 'block';
     document.body.requestFullscreen();
 
     const audio = document.getElementById('startSound');
-    audio.volume = 0.7; // ปรับระดับเสียง
+    audio.volume = 0.7; // Adjust volume
 
     function playRandomSong(audioFiles) {
         const randomSong = audioFiles[Math.floor(Math.random() * audioFiles.length)];
@@ -12,17 +13,17 @@ function startAnimation() {
         audio.play();
     }
 
-    // โหลดไฟล์ JSON เพื่อดึงรายการเพลง
-    fetch('static/temp/sound_list.json') // แก้ไข path นี้ให้ตรงกับไฟล์ JSON ของคุณ
+    // Load JSON file to get the list of songs
+    fetch('static/temp/sound_list.json') // Update path to your JSON file
         .then(response => response.json())
         .then(data => {
             const audioFiles = data.sound_list;
 
             playRandomSong(audioFiles);
 
-            // เมื่อเพลงเล่นจบ ให้เลือกเพลงใหม่แบบสุ่มและรอเวลาสุ่มก่อนเล่นใหม่
+            // Play a new random song after the current one ends
             audio.addEventListener('ended', () => {
-                const randomDelay = Math.random() * 120000 + 60000; // เวลาสุ่มระหว่าง 60,000 ถึง 180,000 มิลลิวินาที (1 ถึง 3 นาที)
+                const randomDelay = Math.random() * 120000 + 60000; // Random delay between 1 to 3 minutes
                 setTimeout(() => {
                     playRandomSong(audioFiles);
                 }, randomDelay);
@@ -30,7 +31,7 @@ function startAnimation() {
         })
         .catch(error => console.error('Error loading sound list:', error));
 
-    // โหลดไฟล์ wakeword และเรียก reset_wake หลังจากโหลดเสร็จ
+    // Load wakeword config and start recognition
     fetch('static/config/wakeword_config.json')
         .then(response => {
             if (!response.ok) {
@@ -40,7 +41,7 @@ function startAnimation() {
         })
         .then(data => {
             var wakeword = data.wakeword[0];
-            reset_wake(audio, wakeword); // ย้ายการเรียก reset_wake มาที่นี่
+            reset_wake(audio, wakeword); // Call reset_wake after loading
         })
         .catch(error => console.error('Error loading JSON:', error));
 
@@ -49,11 +50,13 @@ function startAnimation() {
     recognition_wake.start();
 }
 
+// Function to handle blinking animation
 function playBlinkingLoop() {
     eyes.startBlinking();
     setTimeout(playBlinkingLoop, Math.random() * 3000 + 1000);
 }
 
+// EyeController class
 class EyeController {
     constructor(elements = {}, eyeSize = '33.33vmin') {
         this._eyeSize = eyeSize;
@@ -102,7 +105,6 @@ class EyeController {
         tgtTranYValLower = `calc(-${this._eyeSize} / 2)`,
     } = {}) {
         if (this._blinkTimeoutID) {
-            //console.warn(`Already blinking with timeoutID=${this._blinkTimeoutID}; return;`);
             return;
         }
 
@@ -147,8 +149,16 @@ class EyeController {
     stopBlinking() {
         clearTimeout(this._blinkTimeoutID);
     }
+
+    resizeEyes(newSize) {
+        this._eyeSize = newSize;
+        document.documentElement.style.setProperty('--eye-size', newSize);
+        this.stopBlinking();
+        this.startBlinking({ duration: 300, maxInterval: 5000 });
+    }
 }
 
+// Initialize EyeController with elements
 const eyes = new EyeController({
     leftEye: document.querySelector('.eye.left'),
     rightEye: document.querySelector('.eye.right'),
@@ -160,12 +170,14 @@ const eyes = new EyeController({
 
 eyes.startBlinking({ duration: 300, maxInterval: 5000 });
 
+// Initialize speech recognition
 var recognition_wake = new webkitSpeechRecognition();
 recognition_wake.lang = 'th-TH';
 recognition_wake.interimResults = true;
 recognition_wake.continuous = false;
 recognition_wake.maxAlternatives = 1;
 
+// Function to handle wakeword detection
 function reset_wake(audio, wakeword) {
     recognition_wake.onend = function () {
         recognition_wake.start();
@@ -178,11 +190,22 @@ function reset_wake(audio, wakeword) {
             console.log(newtranScript_wake);
 
             if (newtranScript_wake.includes(wakeword)) {
+                // Stop and reset the audio
                 audio.pause();
                 audio.currentTime = 0;
+
+                // Resize eyes
+                eyes.resizeEyes('2vmin'); // Adjust size as needed
+
+                // Stop speech recognition
                 recognition_wake.stop();
                 break;
             }
         }
     };
+}
+
+// Function to reset the eye size (optional)
+function resetEyeSize() {
+    eyes.resizeEyes('33.33vmin'); // Original size
 }
