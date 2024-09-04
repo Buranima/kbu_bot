@@ -4,7 +4,7 @@ import json
 import os
 
 # โหลดข้อมูลจากไฟล์ JSON
-with open('static/json/database_config.json', 'r') as file:
+with open('static/config/database_config.json', 'r') as file:
     config = json.load(file)
 
 # เชื่อมต่อกับฐานข้อมูล
@@ -29,7 +29,7 @@ file_list = os.listdir(folder_path)
 sound_list = {"sound_list": [f"static/sound/{file_name}" for file_name in file_list]}
 
 # ระบุเส้นทางที่ต้องการบันทึกไฟล์
-json_file_path = 'static/json/sound_list.json'
+json_file_path = 'static/temp/sound_list.json'
 
 # บันทึกข้อมูลเป็นไฟล์ JSON
 with open(json_file_path, 'w') as json_file:

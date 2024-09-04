@@ -13,7 +13,7 @@ function startAnimation() {
     }
 
     // โหลดไฟล์ JSON เพื่อดึงรายการเพลง
-    fetch('static/json/sound_list.json') // แก้ไข path นี้ให้ตรงกับไฟล์ JSON ของคุณ
+    fetch('static/temp/sound_list.json') // แก้ไข path นี้ให้ตรงกับไฟล์ JSON ของคุณ
         .then(response => response.json())
         .then(data => {
             const audioFiles = data.sound_list;
