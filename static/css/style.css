@@ -95,28 +95,32 @@ body {
   left: calc(var(--eye-size) * -0.375);
 }
 
-@keyframes shrinkEyes {
-  from {
-    width: var(--eye-size);
-    height: var(--eye-size);
+@keyframes moveEyesUpDown {
+  0% {
     transform: translateY(0);
   }
-
-  to {
-    width: calc(var(--eye-size) * 0.1);
-    height: calc(var(--eye-size) * 0.1);
-    transform: translateY(calc(var(--eye-size) * -1.7));
+  50% {
+    transform: translateY(-50px); /* ขยับขึ้น 50px */
+  }
+  100% {
+    transform: translateY(0);
   }
 }
 
-.eye.left.shrink {
-  animation: shrinkEyes 1s forwards;
-  --eye-size: 24vmin;
-  left: calc(50% + var(--eye-size) * 0.1);
+.eye.left.move-up-down {
+  position: absolute;
+  animation: moveEyesUpDown 1s infinite; /* ทำให้ดวงตาขยับขึ้นลง */
+  --eye-size: 4vmin; /* ขนาดเริ่มต้นของดวงตา */
+  top: 40%; /* จัดตำแหน่งดวงตาในแกน Y */
+  left: calc(50% - var(--eye-size) * 1.5); /* จัดตำแหน่งดวงตาซ้ายในแกน X */
+  animation-delay: 0s; /* เริ่มการเคลื่อนไหวทันที */
 }
 
-.eye.right.shrink {
-  animation: shrinkEyes 1s forwards;
-  --eye-size: 24vmin;
-  right: calc(50% + var(--eye-size) * 0.1);
+.eye.right.move-up-down {
+  position: absolute;
+  animation: moveEyesUpDown 1s infinite; /* ทำให้ดวงตาขยับขึ้นลง */
+  --eye-size: 4vmin; /* ขนาดเริ่มต้นของดวงตา */
+  top: 40%; /* จัดตำแหน่งดวงตาในแกน Y */
+  left: calc(50% + var(--eye-size) * 1.5); /* จัดตำแหน่งดวงตาขวาในแกน X */
+  animation-delay: 0.5s; /* เริ่มการเคลื่อนไหวล่าช้า 0.5 วินาทีเพื่อให้สลับกัน */
 }

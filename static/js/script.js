@@ -184,8 +184,8 @@ function reset_wake(audio, wakeword) {
                 eyes.stopBlinking(); // หยุดการกระพริบตาที่นี่
 
                 // เพิ่มคลาส .shrink เพื่อให้ดวงตาเล็กลง
-                document.querySelector('.eye.left').classList.add('shrink');
-                document.querySelector('.eye.right').classList.add('shrink');
+                document.querySelector('.eye.left').classList.add('move-up-down');
+                document.querySelector('.eye.right').classList.add('move-up-down');
 
                 break;
             }
