@@ -100,7 +100,7 @@ body {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-50px); /* ขยับขึ้น 50px */
+    transform: translateY(-10vh); /* ขยับขึ้น 50px */
   }
   100% {
     transform: translateY(0);
