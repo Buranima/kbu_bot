@@ -100,7 +100,7 @@ body {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-10vh); /* ขยับขึ้น 50px */
+    transform: translateY(-8vh); /* ขยับขึ้น 50px */
   }
   100% {
     transform: translateY(0);
@@ -121,6 +121,6 @@ body {
   animation: moveEyesUpDown 1s infinite; /* ทำให้ดวงตาขยับขึ้นลง */
   --eye-size: 4vmin; /* ขนาดเริ่มต้นของดวงตา */
   top: 40%; /* จัดตำแหน่งดวงตาในแกน Y */
-  left: calc(50% + var(--eye-size) * 1.5); /* จัดตำแหน่งดวงตาขวาในแกน X */
+  left: calc(50% + var(--eye-size) * 0.5); /* จัดตำแหน่งดวงตาขวาในแกน X */
   animation-delay: 0.5s; /* เริ่มการเคลื่อนไหวล่าช้า 0.5 วินาทีเพื่อให้สลับกัน */
 }

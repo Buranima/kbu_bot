@@ -182,13 +182,29 @@ function reset_wake(audio, wakeword) {
                 audio.currentTime = 0;
                 recognition_wake.stop();
                 eyes.stopBlinking(); // หยุดการกระพริบตาที่นี่
-
+            
                 // เพิ่มคลาส .shrink เพื่อให้ดวงตาเล็กลง
                 document.querySelector('.eye.left').classList.add('move-up-down');
                 document.querySelector('.eye.right').classList.add('move-up-down');
-
+            
+                // สร้างข้อความ "กำลังฟัง" และเพิ่มไปที่หน้าจอ
+                let listeningMessage = document.createElement('div');
+                listeningMessage.innerText = "Listening...";
+                listeningMessage.style.position = "fixed"; // ใช้ fixed เพื่อให้อยู่กลางหน้าจอ
+                listeningMessage.style.top = "55%";
+                listeningMessage.style.left = "50%";
+                listeningMessage.style.transform = "translate(-50%, -50%)"; // จัดตำแหน่งตรงกลาง
+                listeningMessage.style.color = "#000"; // สีของข้อความ
+                listeningMessage.style.fontSize = "3.5vh"; // ขนาดของข้อความ
+                listeningMessage.style.zIndex = "1000"; // เพื่อให้ข้อความอยู่ด้านบน
+            
+                // เพิ่มข้อความไปยัง body
+                document.body.appendChild(listeningMessage);
+            
                 break;
             }
+            
+            
         }
     };
 }
