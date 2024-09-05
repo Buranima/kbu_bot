@@ -3,7 +3,7 @@ import subprocess
 import sys
 
 # อ่านไฟล์ JSON
-with open('extension/extension_install.json', 'r') as file:
+with open('static/config/install_config.json', 'r') as file:
     data = json.load(file)
 
 # ตรวจสอบว่าใน JSON มีคีย์ "extension_install" หรือไม่
