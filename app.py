@@ -3,21 +3,21 @@ import mysql.connector
 import json
 import os
 
-# โหลดข้อมูลจากไฟล์ JSON
-with open('static/config/database_config.json', 'r') as file:
-    config = json.load(file)
+# # โหลดข้อมูลจากไฟล์ JSON
+# with open('static/config/database_config.json', 'r') as file:
+#     config = json.load(file)
 
-# เชื่อมต่อกับฐานข้อมูล
-conn = mysql.connector.connect(
-    host=config["host"][0],
-    user=config["user"][0],
-    password=config["password"][0],
-    database=config["database"][0],
-    charset=config["charset"][0],
-    collation=config["collation"][0]
-)
+# # เชื่อมต่อกับฐานข้อมูล
+# conn = mysql.connector.connect(
+#     host=config["host"][0],
+#     user=config["user"][0],
+#     password=config["password"][0],
+#     database=config["database"][0],
+#     charset=config["charset"][0],
+#     collation=config["collation"][0]
+# )
 
-cursor = conn.cursor()
+# cursor = conn.cursor()
 
 # ระบุเส้นทางของโฟลเดอร์ที่ต้องการอ่าน
 folder_path = 'static/sound'
