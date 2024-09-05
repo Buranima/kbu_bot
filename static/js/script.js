@@ -183,23 +183,31 @@ function reset_wake(audio, wakeword) {
                 recognition_wake.stop();
                 eyes.stopBlinking(); // หยุดการกระพริบตาที่นี่
             
-                // เพิ่มคลาส .shrink เพื่อให้ดวงตาเล็กลง
+                // เพิ่มคลาส move-up-down ให้กับตาซ้ายและตาขวา
                 document.querySelector('.eye.left').classList.add('move-up-down');
                 document.querySelector('.eye.right').classList.add('move-up-down');
             
-                // สร้างข้อความ "กำลังฟัง" และเพิ่มไปที่หน้าจอ
+                // สร้างข้อความ "Listening" และเพิ่มไปที่หน้าจอ
                 let listeningMessage = document.createElement('div');
-                listeningMessage.innerText = "Listening...";
-                listeningMessage.style.position = "fixed"; // ใช้ fixed เพื่อให้อยู่กลางหน้าจอ
+                listeningMessage.innerText = "Listening"; // ข้อความเริ่มต้น
+                listeningMessage.style.position = "fixed";
                 listeningMessage.style.top = "55%";
-                listeningMessage.style.left = "50%";
-                listeningMessage.style.transform = "translate(-50%, -50%)"; // จัดตำแหน่งตรงกลาง
-                listeningMessage.style.color = "#000"; // สีของข้อความ
-                listeningMessage.style.fontSize = "3.5vh"; // ขนาดของข้อความ
-                listeningMessage.style.zIndex = "1000"; // เพื่อให้ข้อความอยู่ด้านบน
+                listeningMessage.style.left = "45%"; // ขยับไปที่ 40% จากขอบซ้ายของหน้าจอ
+                listeningMessage.style.color = "#000";
+                listeningMessage.style.fontSize = "3.5vh";
+                listeningMessage.style.zIndex = "1000";
+                listeningMessage.style.width = "10ch"; // กำหนดความกว้างคงที่เพื่อรองรับข้อความ "Listening..."
+                listeningMessage.style.textAlign = "left"; // จัดข้อความให้อยู่ชิดซ้าย
             
-                // เพิ่มข้อความไปยัง body
                 document.body.appendChild(listeningMessage);
+            
+                // สร้างแอนิเมชันสำหรับการแสดงจุดทีละจุด
+                let dots = 0;
+                const maxDots = 3;
+                const interval = setInterval(() => {
+                    dots = (dots + 1) % (maxDots + 1); // วนลูปจุด 1 ถึง 3
+                    listeningMessage.innerText = "Listening" + ".".repeat(dots) + " ".repeat(maxDots - dots); // อัปเดตข้อความและเว้นที่สำหรับจุด
+                }, 500); // เปลี่ยนแปลงทุกๆ 500 มิลลิวินาที (0.5 วินาที)
             
                 break;
             }
