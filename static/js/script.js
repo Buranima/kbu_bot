@@ -30,9 +30,22 @@ function startAnimation() {
         })
         .catch(error => console.error('Error loading sound list:', error));
 
+    // โหลดไฟล์ wakeword และเรียก reset_wake หลังจากโหลดเสร็จ
+    fetch('static/config/wakeword_config.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            var wakeword = data.wakeword[0];
+            reset_wake(audio, wakeword); // ย้ายการเรียก reset_wake มาที่นี่
+        })
+        .catch(error => console.error('Error loading JSON:', error));
+
     // Start blinking loop
     playBlinkingLoop();
-    reset_wake(audio); // ส่งผ่าน audio เป็นอาร์กิวเมนต์
     recognition_wake.start();
 }
 
@@ -153,10 +166,10 @@ recognition_wake.interimResults = true;
 recognition_wake.continuous = false;
 recognition_wake.maxAlternatives = 1;
 
-function reset_wake(audio) { // รับตัวแปร audio ที่นี่
+function reset_wake(audio, wakeword) {
     recognition_wake.onend = function () {
         recognition_wake.start();
-    }
+    };
     recognition_wake.onresult = function (event) {
         for (var resultIndex = event.resultIndex; resultIndex < event.results.length; ++resultIndex) {
             var speechRecognitionAlternative_wake = event.results[resultIndex][0];
@@ -164,16 +177,12 @@ function reset_wake(audio) { // รับตัวแปร audio ที่น�
             var newtranScript_wake = tranScript_wake.replace('ครับ', "").replace('ค่ะ', "").replace('จ้า', "").replace('จ้ะ', "").replace(' ', "");
             console.log(newtranScript_wake);
 
-            if (newtranScript_wake.includes('น้องเกษม')) {
-                // หยุดเล่นเพลง
+            if (newtranScript_wake.includes(wakeword)) {
                 audio.pause();
-                audio.currentTime = 0; // ตั้งเวลาเริ่มต้นของเพลงให้กลับไปที่จุดเริ่มต้น
-
+                audio.currentTime = 0;
                 recognition_wake.stop();
                 break;
             }
         }
-    }
+    };
 }
-
-reset_wake();
