@@ -177,7 +177,6 @@ recognition_wake.interimResults = true;
 recognition_wake.continuous = false;
 recognition_wake.maxAlternatives = 1;
 
-// Function to handle wakeword detection
 function reset_wake(audio, wakeword) {
     recognition_wake.onend = function () {
         recognition_wake.start();
@@ -194,8 +193,8 @@ function reset_wake(audio, wakeword) {
                 audio.pause();
                 audio.currentTime = 0;
 
-                // Resize eyes
-                eyes.resizeEyes('2vmin'); // Adjust size as needed
+                // Gradually resize eyes
+                graduallyResizeEyes('2vmin'); // Adjust size as needed
 
                 // Stop speech recognition
                 recognition_wake.stop();
@@ -206,6 +205,32 @@ function reset_wake(audio, wakeword) {
 }
 
 // Function to reset the eye size (optional)
-function resetEyeSize() {
-    eyes.resizeEyes('33.33vmin'); // Original size
+function resizeEyes(newSize) {
+    this._eyeSize = newSize;
+    document.documentElement.style.setProperty('--eye-size', newSize);
+    this.stopBlinking();
+    // this.startBlinking({ duration: 300, maxInterval: 5000 });
+}
+
+// Function to gradually resize eyes
+function graduallyResizeEyes(newSize, duration = 500) {
+    const startSize = getComputedStyle(document.documentElement).getPropertyValue('--eye-size');
+    const startValue = parseFloat(startSize);
+    const endValue = parseFloat(newSize);
+    const startTime = performance.now();
+
+    function resize() {
+        const currentTime = performance.now();
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1); // Ensure progress is between 0 and 1
+        const newSizeValue = startValue + (endValue - startValue) * progress;
+
+        eyes.resizeEyes(`${newSizeValue}vmin`);
+
+        if (progress < 1) {
+            requestAnimationFrame(resize);
+        }
+    }
+
+    resize();
 }
