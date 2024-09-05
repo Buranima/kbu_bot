@@ -1,11 +1,10 @@
-// Function to start the animation and play random songs
 function startAnimation() {
     document.querySelector('.start-button').style.display = 'none';
     document.querySelector('.face').style.display = 'block';
     document.body.requestFullscreen();
 
     const audio = document.getElementById('startSound');
-    audio.volume = 0.7; // Adjust volume
+    audio.volume = 0.7; // ปรับระดับเสียง
 
     function playRandomSong(audioFiles) {
         const randomSong = audioFiles[Math.floor(Math.random() * audioFiles.length)];
@@ -13,17 +12,17 @@ function startAnimation() {
         audio.play();
     }
 
-    // Load JSON file to get the list of songs
-    fetch('static/temp/sound_list.json') // Update path to your JSON file
+    // โหลดไฟล์ JSON เพื่อดึงรายการเพลง
+    fetch('static/temp/sound_list.json') // แก้ไข path นี้ให้ตรงกับไฟล์ JSON ของคุณ
         .then(response => response.json())
         .then(data => {
             const audioFiles = data.sound_list;
 
             playRandomSong(audioFiles);
 
-            // Play a new random song after the current one ends
+            // เมื่อเพลงเล่นจบ ให้เลือกเพลงใหม่แบบสุ่มและรอเวลาสุ่มก่อนเล่นใหม่
             audio.addEventListener('ended', () => {
-                const randomDelay = Math.random() * 120000 + 60000; // Random delay between 1 to 3 minutes
+                const randomDelay = Math.random() * 120000 + 60000; // เวลาสุ่มระหว่าง 60,000 ถึง 180,000 มิลลิวินาที (1 ถึง 3 นาที)
                 setTimeout(() => {
                     playRandomSong(audioFiles);
                 }, randomDelay);
@@ -31,7 +30,7 @@ function startAnimation() {
         })
         .catch(error => console.error('Error loading sound list:', error));
 
-    // Load wakeword config and start recognition
+    // โหลดไฟล์ wakeword และเรียก reset_wake หลังจากโหลดเสร็จ
     fetch('static/config/wakeword_config.json')
         .then(response => {
             if (!response.ok) {
@@ -41,7 +40,7 @@ function startAnimation() {
         })
         .then(data => {
             var wakeword = data.wakeword[0];
-            reset_wake(audio, wakeword); // Call reset_wake after loading
+            reset_wake(audio, wakeword); // ย้ายการเรียก reset_wake มาที่นี่
         })
         .catch(error => console.error('Error loading JSON:', error));
 
@@ -50,13 +49,11 @@ function startAnimation() {
     recognition_wake.start();
 }
 
-// Function to handle blinking animation
 function playBlinkingLoop() {
     eyes.startBlinking();
     setTimeout(playBlinkingLoop, Math.random() * 3000 + 1000);
 }
 
-// EyeController class
 class EyeController {
     constructor(elements = {}, eyeSize = '33.33vmin') {
         this._eyeSize = eyeSize;
@@ -105,6 +102,7 @@ class EyeController {
         tgtTranYValLower = `calc(-${this._eyeSize} / 2)`,
     } = {}) {
         if (this._blinkTimeoutID) {
+            //console.warn(`Already blinking with timeoutID=${this._blinkTimeoutID}; return;`);
             return;
         }
 
@@ -149,16 +147,8 @@ class EyeController {
     stopBlinking() {
         clearTimeout(this._blinkTimeoutID);
     }
-
-    resizeEyes(newSize) {
-        this._eyeSize = newSize;
-        document.documentElement.style.setProperty('--eye-size', newSize);
-        this.stopBlinking();
-        this.startBlinking({ duration: 300, maxInterval: 5000 });
-    }
 }
 
-// Initialize EyeController with elements
 const eyes = new EyeController({
     leftEye: document.querySelector('.eye.left'),
     rightEye: document.querySelector('.eye.right'),
@@ -170,7 +160,6 @@ const eyes = new EyeController({
 
 eyes.startBlinking({ duration: 300, maxInterval: 5000 });
 
-// Initialize speech recognition
 var recognition_wake = new webkitSpeechRecognition();
 recognition_wake.lang = 'th-TH';
 recognition_wake.interimResults = true;
@@ -189,48 +178,17 @@ function reset_wake(audio, wakeword) {
             console.log(newtranScript_wake);
 
             if (newtranScript_wake.includes(wakeword)) {
-                // Stop and reset the audio
                 audio.pause();
                 audio.currentTime = 0;
-
-                // Gradually resize eyes
-                graduallyResizeEyes('2vmin'); // Adjust size as needed
-
-                // Stop speech recognition
                 recognition_wake.stop();
+                eyes.stopBlinking(); // หยุดการกระพริบตาที่นี่
+
+                // เพิ่มคลาส .shrink เพื่อให้ดวงตาเล็กลง
+                document.querySelector('.eye.left').classList.add('shrink');
+                document.querySelector('.eye.right').classList.add('shrink');
+
                 break;
             }
         }
     };
-}
-
-// Function to reset the eye size (optional)
-function resizeEyes(newSize) {
-    this._eyeSize = newSize;
-    document.documentElement.style.setProperty('--eye-size', newSize);
-    this.stopBlinking();
-    // this.startBlinking({ duration: 300, maxInterval: 5000 });
-}
-
-// Function to gradually resize eyes
-function graduallyResizeEyes(newSize, duration = 500) {
-    const startSize = getComputedStyle(document.documentElement).getPropertyValue('--eye-size');
-    const startValue = parseFloat(startSize);
-    const endValue = parseFloat(newSize);
-    const startTime = performance.now();
-
-    function resize() {
-        const currentTime = performance.now();
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1); // Ensure progress is between 0 and 1
-        const newSizeValue = startValue + (endValue - startValue) * progress;
-
-        eyes.resizeEyes(`${newSizeValue}vmin`);
-
-        if (progress < 1) {
-            requestAnimationFrame(resize);
-        }
-    }
-
-    resize();
 }

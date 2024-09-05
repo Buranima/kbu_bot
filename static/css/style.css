@@ -60,7 +60,6 @@ body {
   border-radius: 100%;
   height: var(--eye-size);
   width: var(--eye-size);
-  /*bottom: calc(var(--eye-size) / 3);*/
   bottom: calc(var(--eye-size));
   z-index: 1;
   transform: rotateX(0);
@@ -94,4 +93,30 @@ body {
   border-radius: 100%;
   bottom: calc(var(--eye-size) * -1);
   left: calc(var(--eye-size) * -0.375);
+}
+
+@keyframes shrinkEyes {
+  from {
+    width: var(--eye-size);
+    height: var(--eye-size);
+    transform: translateY(0);
+  }
+
+  to {
+    width: calc(var(--eye-size) * 0.1);
+    height: calc(var(--eye-size) * 0.1);
+    transform: translateY(calc(var(--eye-size) * -1.7));
+  }
+}
+
+.eye.left.shrink {
+  animation: shrinkEyes 1s forwards;
+  --eye-size: 24vmin;
+  left: calc(50% + var(--eye-size) * 0.1);
+}
+
+.eye.right.shrink {
+  animation: shrinkEyes 1s forwards;
+  --eye-size: 24vmin;
+  right: calc(50% + var(--eye-size) * 0.1);
 }
