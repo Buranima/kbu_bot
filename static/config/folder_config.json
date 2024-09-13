@@ -1,5 +1,6 @@
 {
     "static": {
+        "base": [],
         "config": [],
         "css": [],
         "img": [],
@@ -7,5 +8,6 @@
         "sound": [],
         "temp": []
     },
-    "templates": []
+    "templates": [],
+    "TEST": []
 }

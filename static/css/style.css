@@ -1,126 +1,62 @@
-:root {
-  --face-color: rgb(255, 255, 255);
-  /* สีพื้นหลังของใบหน้าเป็นสีดำ */
-  --face-height: 100vh;
-  --face-width: 100vw;
-  --eye-size: 33.33vmin;
-  --eye-color: rgb(0, 0, 0);
-  /* สีของดวงตาเป็นสีขาว */
-  --eyelid-color: rgb(255, 255, 255);
-  /* สีของเปลือกตาเป็นสีดำ */
-  --button-size: 30vmin;
-  /* ขนาดของปุ่มวงกลม */
+@keyframes move_eyes {
+  0% {
+    height: 40%;
+  }
+
+  50% {
+    height: 0%;
+  }
+
+  100% {
+    height: 40%;
+  }
 }
 
 body {
-  background-color: rgb(255, 255, 255);
-  /* สีพื้นหลังของหน้าเว็บเป็นสีดำ */
-  margin: 0px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin: 0;
+  padding: 0;
   height: 100vh;
-  width: 100vw;
+  display: flex;
+  flex-direction: column;
 }
 
-.start-button {
-  background-color: rgb(0, 0, 0);
-  /* ปุ่มเป็นสีขาว */
-  color: rgb(255, 255, 255);
-  /* ตัวหนังสือบนปุ่มเป็นสีดำ */
-  border-radius: 50%;
-  /* ทำให้ปุ่มเป็นวงกลม */
-  width: var(--button-size);
-  height: var(--button-size);
+.eyes {
+  display: flex;
+  flex: 1;
+}
+
+.left_eyes {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 2em;
-  cursor: pointer;
-  position: absolute;
-  z-index: 3;
+  flex: 1;
 }
 
-.face {
-  background-color: var(--face-color);
-  margin: auto;
-  height: var(--face-height);
-  width: var(--face-width);
-  position: relative;
-  overflow: hidden;
+.left_eyes_area {
+  background-color: black;
+  width: 40%;
+  height: 40%;
+  border-radius: 20%;
+  /* animation: move_eyes 400ms linear forwards; */
 }
 
-.face div {
-  position: absolute;
+.right_eyes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
 }
 
-.eye {
-  background-color: var(--eye-color);
-  /* ดวงตาเป็นสีขาว */
-  border-radius: 100%;
-  height: var(--eye-size);
-  width: var(--eye-size);
-  bottom: calc(var(--eye-size));
-  z-index: 1;
-  transform: rotateX(0);
+.right_eyes_area {
+  background-color: black;
+  width: 40%;
+  height: 40%;
+  border-radius: 20%;
+  /* animation: move_eyes 400ms linear forwards; */
 }
 
-.eye.left {
-  left: calc(50% + var(--eye-size));
-  /*left: calc(var(--eye-size) / 3);*/
-}
-
-.eye.right {
-  right: calc(50% + var(--eye-size));
-  /*right: calc(var(--eye-size) / 3);*/
-}
-
-.eyelid {
-  background-color: var(--eyelid-color);
-  /* เปลือกตาเป็นสีดำ */
-  height: var(--eye-size);
-  width: calc(var(--eye-size) * 1.75);
-  z-index: 2;
-  transform: rotate(0deg);
-}
-
-.eyelid.upper {
-  bottom: calc(var(--eye-size) * 1);
-  left: calc(var(--eye-size) * -0.375);
-}
-
-.eyelid.lower {
-  border-radius: 100%;
-  bottom: calc(var(--eye-size) * -1);
-  left: calc(var(--eye-size) * -0.375);
-}
-
-@keyframes moveEyesUpDown {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8vh); /* ขยับขึ้น 50px */
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-.eye.left.move-up-down {
-  position: absolute;
-  animation: moveEyesUpDown 1s infinite; /* ทำให้ดวงตาขยับขึ้นลง */
-  --eye-size: 4vmin; /* ขนาดเริ่มต้นของดวงตา */
-  top: 40%; /* จัดตำแหน่งดวงตาในแกน Y */
-  left: calc(50% - var(--eye-size) * 1.5); /* จัดตำแหน่งดวงตาซ้ายในแกน X */
-  animation-delay: 0s; /* เริ่มการเคลื่อนไหวทันที */
-}
-
-.eye.right.move-up-down {
-  position: absolute;
-  animation: moveEyesUpDown 1s infinite; /* ทำให้ดวงตาขยับขึ้นลง */
-  --eye-size: 4vmin; /* ขนาดเริ่มต้นของดวงตา */
-  top: 40%; /* จัดตำแหน่งดวงตาในแกน Y */
-  left: calc(50% + var(--eye-size) * 0.5); /* จัดตำแหน่งดวงตาขวาในแกน X */
-  animation-delay: 0.5s; /* เริ่มการเคลื่อนไหวล่าช้า 0.5 วินาทีเพื่อให้สลับกัน */
+.centered-image {
+  margin-top: 20%;
+  margin-left: 10%;
+  width: 80%;
 }
