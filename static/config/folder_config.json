@@ -1,6 +1,6 @@
 {
     "static": {
-        "base": [],
+        "base": {"img":[], "sound":[]},
         "config": [],
         "css": [],
         "img": [],
