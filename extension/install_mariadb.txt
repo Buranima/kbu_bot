@@ -1,0 +1,26 @@
+sudo apt update 
+sudo apt upgrade -y
+sudo apt install docker docker.io docker-compose -y
+sudo apt update
+sudo -i
+mkdir datamariadb
+chmod 777 datamariadb
+cd /root/datamariadb
+nano docker-compose.yml 
+
+version: "3"
+
+services:
+   maria:
+    container_name: maria
+    hostname: maria
+    image: 'bitnami/mariadb:latest'
+    ports:
+      - 3306:3306
+    volumes:
+      - /root/datamariadb:/bitnami/mariadb
+    environment:
+      - MARIADB_ROOT_PASSWORD=1234
+    restart: always
+
+docker-compose up -d
