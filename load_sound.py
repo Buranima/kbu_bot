@@ -20,3 +20,6 @@ def loadSound():
 
     with open(json_file_path, 'w') as json_file:
         json.dump(sound_list, json_file, indent=4)
+
+if __name__ == "__main__":
+    loadSound()

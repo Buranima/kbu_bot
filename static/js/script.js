@@ -4,6 +4,8 @@ wake_word.interimResults = true;
 wake_word.continuous = false;
 wake_word.maxAlternatives = 1;
 
+var socket = io();
+
 function resetWakeWord() {
     wake_word.onend = function () {
         wake_word.start();
@@ -22,16 +24,34 @@ function resetWakeWord() {
                 wake_word.onend = null;
                 wake_word.onresult = null;
                 wake_word.stop();
+                ttsCommand("สวัสดีค่ะ มีอะไรให้หนูช่วยมั้ยคะ");
                 break;
             }
             else if (newtranScript1.includes("น้องเกษม")) {
                 wake_word.onend = null;
                 wake_word.onresult = null;
                 wake_word.stop();
+                ttsCommand("ค่าา");
                 break;
             }
         }
     }
 }
+
+function ttsCommand(tts_command_text) {
+    var tts_command_json_data = { speech: tts_command_text };
+    socket.emit("tts-command", tts_command_json_data);
+}
+
+function playTTS(directory_tts) {
+    var play_tts_audio = new Audio(directory_tts);
+    play_tts_audio.play();
+}
+
+socket.on("play-tts-command", (play_tts_command_json_data) => {
+    console.log(JSON.parse(play_tts_command_json_data).directory);
+    playTTS(JSON.parse(play_tts_command_json_data).directory);
+});
+
 resetWakeWord();
 wake_word.start();
