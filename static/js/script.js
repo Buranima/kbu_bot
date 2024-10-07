@@ -61,6 +61,7 @@ function resetListenWord() {
         console.log(listen_word_script_edit);
         listen_word.onend = null;
         listen_word.onresult = null;
+        listen_word.stop();
     }
 }
 
@@ -76,7 +77,6 @@ function ttsListenWord(tts_listen_word_text) {
 
 function playTTSWakeWord(play_tts_wake_word_directory) {
     var play_tts_wake_word_audio = new Audio(play_tts_wake_word_directory + new Date().getTime());
-    play_tts_wake_word_audio.load();
     play_tts_wake_word_audio.play();
     play_tts_wake_word_audio.addEventListener('ended', function () {
         listen_word.start();
@@ -86,12 +86,11 @@ function playTTSWakeWord(play_tts_wake_word_directory) {
 
 function playTTSListenWord(play_tts_listen_word_directory) {
     var play_tts_listen_word_audio = new Audio(play_tts_listen_word_directory + new Date().getTime());
-    play_tts_listen_word_audio.load();
     play_tts_listen_word_audio.play();
-    play_tts_listen_word_audio.addEventListener('ended', function () {
-        // wake_word.start();
-        // resetWakeWord();
-    });
+    // play_tts_listen_word_audio.addEventListener('ended', function () {
+    //     // wake_word.start();
+    //     // resetWakeWord();
+    // });
 }
 
 kbu_bot_socket.on("play-tts-wake-word", (play_tts_wake_word_json_data) => {
