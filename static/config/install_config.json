@@ -1,6 +1,7 @@
 {
     "extension_install": [
         "Flask",
-        "mysql-connector-python"
+        "mysql-connector-python",
+        "gTTS"
     ]
 }
