@@ -49,6 +49,7 @@ function resetListenWord() {
         listen_word.onend = null;
         listen_word.onresult = null;
         listen_word.stop();
+        ttsListenWord("หนูไม่ได้ยินเสียงของคุณค่ะ");
     }
     listen_word.onresult = function (listen_word_event) {
         var listen_word_script = listen_word_event.results[0][0].transcript;
@@ -58,6 +59,7 @@ function resetListenWord() {
         listen_word_script_edit = listen_word_script_edit.replace("จ้ะ", "");
         listen_word_script_edit = listen_word_script_edit.replace(" ", "");
         console.log(listen_word_script_edit);
+        listen_word.onend = null;
         listen_word.onresult = null;
     }
 }
@@ -73,20 +75,22 @@ function ttsListenWord(tts_listen_word_text) {
 }
 
 function playTTSWakeWord(play_tts_wake_word_directory) {
-    var play_tts_wake_word_audio = new Audio(play_tts_wake_word_directory);
+    var play_tts_wake_word_audio = new Audio(play_tts_wake_word_directory + new Date().getTime());
+    play_tts_wake_word_audio.load();
     play_tts_wake_word_audio.play();
     play_tts_wake_word_audio.addEventListener('ended', function () {
-        resetListenWord();
         listen_word.start();
+        resetListenWord();
     });
 }
 
 function playTTSListenWord(play_tts_listen_word_directory) {
-    var play_tts_listen_word_audio = new Audio(play_tts_listen_word_directory);
+    var play_tts_listen_word_audio = new Audio(play_tts_listen_word_directory + new Date().getTime());
+    play_tts_listen_word_audio.load();
     play_tts_listen_word_audio.play();
     play_tts_listen_word_audio.addEventListener('ended', function () {
-        resetWakeWord();
-        wake_word.start();
+        // wake_word.start();
+        // resetWakeWord();
     });
 }
 
@@ -100,5 +104,5 @@ kbu_bot_socket.on("play-tts-listen-word", (play_tts_listen_word_json_data) => {
     playTTSListenWord(JSON.parse(play_tts_listen_word_json_data).directory);
 });
 
-resetWakeWord();
 wake_word.start();
+resetWakeWord();

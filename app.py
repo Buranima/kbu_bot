@@ -21,7 +21,7 @@ def ttsWakeWord(tts_wake_word_text):
     tts_wake_word_json_dictionary_data = json.loads(tts_wake_word_json_string_data)
     print(tts_wake_word_json_dictionary_data["speech"])
     textToSpeech(tts_wake_word_json_dictionary_data["speech"])
-    socketio.emit("play-tts-wake-word", '{"directory":"static/temp/text_to_speech.mp3"}')
+    socketio.emit("play-tts-wake-word", '{"directory":"static/temp/text_to_speech.mp3?v="}')
 
 @socketio.on("tts-listen-word")
 def ttsListenWord(tts_listen_word_text):
@@ -30,7 +30,7 @@ def ttsListenWord(tts_listen_word_text):
     tts_listen_word_json_dictionary_data = json.loads(tts_listen_word_json_string_data)
     print(tts_listen_word_json_dictionary_data["speech"])
     textToSpeech(tts_listen_word_json_dictionary_data["speech"])
-    socketio.emit("play-tts-listen-word", '{"directory":"static/temp/text_to_speech.mp3"}')
+    socketio.emit("play-tts-listen-word", '{"directory":"static/temp/text_to_speech.mp3?v="}')
 
 if __name__ == "__main__":
     socketio.run(app, debug=True, host="0.0.0.0")

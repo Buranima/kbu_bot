@@ -6,6 +6,10 @@ def textToSpeech(tts_text):
     text_to_speech_slow = False
     text_to_speech = gTTS(text=tts_text, lang=text_to_speech_language, slow=text_to_speech_slow)
     text_to_speech_output = os.path.join("static/temp", "text_to_speech.mp3")
+
+    if os.path.exists(text_to_speech_output):
+        os.remove(text_to_speech_output)
+    
     text_to_speech.save(text_to_speech_output)
 
 if __name__ == "__main__":

@@ -18,6 +18,9 @@ def loadSound():
 
     json_file_path = 'static/temp/sound_list.json'
 
+    if os.path.exists(json_file_path):
+        os.remove(json_file_path)
+
     with open(json_file_path, 'w') as json_file:
         json.dump(sound_list, json_file, indent=4)
 
