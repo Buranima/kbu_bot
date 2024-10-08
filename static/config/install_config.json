@@ -3,6 +3,8 @@
         "Flask",
         "mysql-connector-python",
         "gTTS",
-        "pythainlp"
+        "pythainlp",
+        "python-socketio",
+        "Flask-SocketIO"
     ]
 }
