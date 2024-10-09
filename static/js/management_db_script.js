@@ -13,11 +13,12 @@ var kbu_bot_socket = io();
         for (let i = 0; i < data.id.length; i++) {
             const question = data.question[i];
             const answer = data.answer[i];
+            const id = data.id[i];
             table.row.add([
                 question,
                 answer,
-                `<button type="button" id=data.id class="btn btn-primary btn-sm">แก้ไขข้อมูล</button>
-                 <button type="button" id=data.id class="btn btn-danger btn-sm">ลบข้อมูล</button>`
+                `<button type="button" id="${id}" class="btn btn-primary btn-sm">แก้ไขข้อมูล</button>
+                 <button type="button" id="${id}" class="btn btn-danger btn-sm">ลบข้อมูล</button>`
             ]);
         }
 
