@@ -1,0 +1,3 @@
+{
+    "CREATE-TABLE":"CREATE TABLE kbu_bot.data_question_answer (id INT auto_increment NOT NULL,question TEXT NOT NULL,answer TEXT NOT NULL,CONSTRAINT data_question_answer_pk PRIMARY KEY (id))ENGINE=InnoDBDEFAULT CHARSET=utf8mb4COLLATE=utf8mb4_general_ci;"
+}

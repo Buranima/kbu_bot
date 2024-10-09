@@ -4,6 +4,7 @@ import json
 
 from load_sound import loadSound
 from text_to_speech import textToSpeech
+from database import connectDataBase, requestDataFormDataQuestionAnswer
 
 loadSound()
 
@@ -29,6 +30,24 @@ def managementSound():
 @app.route("/management_config")
 def managementConfig():
     return render_template("management_config.html")
+
+@socketio.on("data-form-database")
+def dataFormDataBase(data_form_database_text):
+    print(f"ข้อมูลที่ได้รับจาก data-form-database คือ {data_form_database_text}")
+    data_form_database_string_data = json.dumps(data_form_database_text, ensure_ascii=False)
+    data_form_database_dictionary_data = json.loads(data_form_database_string_data)
+    print(data_form_database_dictionary_data["mode"])
+    if str(data_form_database_dictionary_data["mode"]) == "read":
+        print(requestDataFormDataQuestionAnswer())
+        socketio.emit("data-form-database", requestDataFormDataQuestionAnswer())
+
+@socketio.on("data-form-sound")
+def dataFormSound():
+    pass
+
+@socketio.on("data-form-config")
+def dataFormConfig():
+    pass
 
 @socketio.on("tts-wake-word")
 def ttsWakeWord(tts_wake_word_text):
