@@ -14,6 +14,10 @@ socketio = SocketIO(app)
 def index():
     return render_template("index.html")
 
+@app.route("/management_db")
+def managementDB():
+    return render_template("management_db.html")
+
 @socketio.on("tts-wake-word")
 def ttsWakeWord(tts_wake_word_text):
     print(f"ข้อมูลที่ได้รับจาก tts-wake-word คือ {tts_wake_word_text}")
