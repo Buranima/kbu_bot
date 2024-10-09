@@ -6,8 +6,6 @@ from load_sound import loadSound
 from text_to_speech import textToSpeech
 from database import requestDataFormDataQuestionAnswer, updateDataFormDataQuestionAnswer
 
-loadSound()
-
 app = Flask(__name__)
 socketio = SocketIO(app)
 
@@ -76,4 +74,5 @@ def ttsListenWord(tts_listen_word_text):
     socketio.emit("play-tts-listen-word", '{"directory":"static/temp/text_to_speech.mp3?v="}')
 
 if __name__ == "__main__":
+    loadSound()
     socketio.run(app, debug=True, host="0.0.0.0")

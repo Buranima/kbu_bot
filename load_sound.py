@@ -1,10 +1,12 @@
 import json
+import subprocess
+import sys
 import os
 
 def loadSound():
-    folders = ['static/sound', 'static/base/sound']
+    folders = ["static/config/sound", "static/base/sound"]
 
-    allowed_extensions = {'.mp3'}
+    allowed_extensions = {".mp3"}
 
     file_list = []
 
@@ -16,7 +18,7 @@ def loadSound():
 
     sound_list = {"sound_list": file_list}
 
-    json_file_path = 'static/temp/sound_list.json'
+    json_file_path = "static/temp/sound_list.json"
 
     if os.path.exists(json_file_path):
         os.remove(json_file_path)
