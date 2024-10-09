@@ -21,7 +21,7 @@ def verifyFolder():
 
     base_directory = os.getcwd()
 
-    json_file = "static/config/folder_config.json"
+    json_file = "extension/config/folder_config.json"
     folder_structure = load_folder_structure(json_file)
 
     create_folders(base_directory, folder_structure)

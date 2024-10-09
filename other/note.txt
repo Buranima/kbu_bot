@@ -1,3 +1,6 @@
+# วิธียกเลิกการติดตามจาก git
+> git rm --cached ที่ตั้งของไฟล์
+
 var kbu_bot_socket = io();
 
 kbu_bot_socket.on("data-form-database", (on_data_form_database_json) => {

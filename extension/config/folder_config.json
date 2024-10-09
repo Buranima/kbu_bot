@@ -1,0 +1,12 @@
+{
+    "other":[],
+    "static": {
+        "base": {"img":[], "json":[], "sound":[]},
+        "config": {"img":[], "json":[], "sound":[]},
+        "css": [],
+        "js": [],
+        "temp": []
+    },
+    "templates": [],
+    "test": []
+}

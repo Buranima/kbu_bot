@@ -5,15 +5,21 @@ connect_database = None
 cursor_database = None
 def connectDataBase():
     global connect_database, cursor_database
-    connect_database = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="1234",
-        database="kbu_bot",
-        charset='utf8mb4',
-        collation='utf8mb4_general_ci'
-    )
-    cursor_database = connect_database.cursor()
+    try:
+        with open("static/config/json/database_config.json", "r") as file_config_database:
+            config_database = json.load(file_config_database)
+        connect_database = mysql.connector.connect(
+            host=config_database["host"][0],
+            user=config_database["user"][0],
+            password=config_database["password"][0],
+            database=config_database["database"][0],
+            charset=config_database["charset"][0],
+            collation=config_database["collation"][0]
+        )
+        cursor_database = connect_database.cursor()
+        print("เชื่อมต่อกับฐานข้อมูลได้สำเร็จ\n")
+    except mysql.connector.Error as err:
+        print(f"เกิดข้อผิดพลาด: {err}")
 
 def requestDataFormDataQuestionAnswer():
     global connect_database, cursor_database
@@ -30,7 +36,6 @@ def requestDataFormDataQuestionAnswer():
         data_json["question"].append(row_form_data_question_answer[1])
         data_json["answer"].append(row_form_data_question_answer[2])
     json_data = json.dumps(data_json, ensure_ascii=False, indent=4)
-    # print(str(json_data))
     cursor_database.close()
     connect_database.close()
     return json_data
