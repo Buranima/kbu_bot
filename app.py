@@ -38,14 +38,16 @@ def dataFormDataBase(data_form_database_text):
     print(f"ข้อมูลที่ได้รับจาก data-form-database คือ {data_form_database_text}")
     data_form_database_string_data = json.dumps(data_form_database_text, ensure_ascii=False)
     data_form_database_dictionary_data = json.loads(data_form_database_string_data)
-    print(data_form_database_dictionary_data["mode"])
+    print(f'โหมดที่ต้องดำเนินการคือ {data_form_database_dictionary_data["mode"]} mode\n')
     if str(data_form_database_dictionary_data["mode"]) == "read":
-        print(requestDataFormDataQuestionAnswer())
+        # print(requestDataFormDataQuestionAnswer())
         socketio.emit("data-form-database", requestDataFormDataQuestionAnswer())
+        print("ส่งข้อมูลไปยังไคลเอนต์สำเร็จ")
     elif str(data_form_database_dictionary_data["mode"]) == "update":
         updateDataFormDataQuestionAnswer(data_form_database_dictionary_data)
-        print(requestDataFormDataQuestionAnswer())
+        # print(requestDataFormDataQuestionAnswer())
         socketio.emit("data-form-database", requestDataFormDataQuestionAnswer())
+        print("ส่งข้อมูลไปยังไคลเอนต์สำเร็จ")
 
 @socketio.on("data-form-sound")
 def dataFormSound():
