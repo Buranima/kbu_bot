@@ -14,9 +14,21 @@ socketio = SocketIO(app)
 def index():
     return render_template("index.html")
 
+@app.route("/management")
+def management():
+    return render_template("management.html")
+
 @app.route("/management_db")
 def managementDB():
     return render_template("management_db.html")
+
+@app.route("/management_sound")
+def managementSound():
+    return render_template("management_sound.html")
+
+@app.route("/management_config")
+def managementConfig():
+    return render_template("management_config.html")
 
 @socketio.on("tts-wake-word")
 def ttsWakeWord(tts_wake_word_text):
