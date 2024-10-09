@@ -1,7 +1,7 @@
 {
     "other":[],
     "static": {
-        "base": {"img":[], "json":[], "sound":[]},
+        "base": {"img":[], "sound":[], "sql":[]},
         "config": {"img":[], "json":[], "sound":[]},
         "css": [],
         "js": [],

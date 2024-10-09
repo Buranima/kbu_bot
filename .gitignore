@@ -1,4 +1,5 @@
-static/temp
-test
 __pycache__
 extension/__pycache__
+static/temp
+# static/base/sql
+test
