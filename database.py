@@ -35,6 +35,23 @@ def requestDataFormDataQuestionAnswer():
     connect_database.close()
     return json_data
 
+def updateDataFormDataQuestionAnswer(update_data_form_data_question_answer_data):
+    global connect_database, cursor_database
+    connectDataBase()
+    update_data_form_data_question_answer_json_string_data = json.dumps(update_data_form_data_question_answer_data, ensure_ascii=False)
+    update_data_form_data_question_answer_json_dictionary_data = json.loads(update_data_form_data_question_answer_json_string_data)
+    sql_update_query = """UPDATE data_question_answer SET question = %s, answer = %s WHERE id = %s"""
+    values_update_query = (str(update_data_form_data_question_answer_json_dictionary_data["question"]), str(update_data_form_data_question_answer_json_dictionary_data["answer"]), str(update_data_form_data_question_answer_json_dictionary_data["id"]))
+    try:
+        cursor_database.execute(sql_update_query, values_update_query)
+        connect_database.commit()
+        print(f"ข้อมูลที่มี id {int(update_data_form_data_question_answer_json_dictionary_data['id'])} ถูกอัปเดตเรียบร้อยแล้ว")
+    except mysql.connector.Error as err:
+        print(f"เกิดข้อผิดพลาด: {err}")
+    finally:
+        cursor_database.close()
+        connect_database.close()
+
 if __name__ == "__main__":
     a = requestDataFormDataQuestionAnswer()
     print(str(a))

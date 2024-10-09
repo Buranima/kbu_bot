@@ -4,12 +4,16 @@ import json
 
 from load_sound import loadSound
 from text_to_speech import textToSpeech
-from database import connectDataBase, requestDataFormDataQuestionAnswer
+from database import requestDataFormDataQuestionAnswer, updateDataFormDataQuestionAnswer
 
 loadSound()
 
 app = Flask(__name__)
 socketio = SocketIO(app)
+
+@app.route("/test")
+def test():
+    return render_template("test.html")
 
 @app.route("/")
 def index():
@@ -38,6 +42,10 @@ def dataFormDataBase(data_form_database_text):
     data_form_database_dictionary_data = json.loads(data_form_database_string_data)
     print(data_form_database_dictionary_data["mode"])
     if str(data_form_database_dictionary_data["mode"]) == "read":
+        print(requestDataFormDataQuestionAnswer())
+        socketio.emit("data-form-database", requestDataFormDataQuestionAnswer())
+    elif str(data_form_database_dictionary_data["mode"]) == "update":
+        updateDataFormDataQuestionAnswer(data_form_database_dictionary_data)
         print(requestDataFormDataQuestionAnswer())
         socketio.emit("data-form-database", requestDataFormDataQuestionAnswer())
 
