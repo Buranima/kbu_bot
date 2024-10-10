@@ -4,8 +4,7 @@ import json
 
 from load_sound import loadSound
 from text_to_speech import textToSpeech
-from database import requestDataFormDataQuestionAnswer, updateDataFormDataQuestionAnswer
-from analyze_questions import setLatestQuestions
+from database import requestDataFormDataQuestionAnswer, updateDataFormDataQuestionAnswer, insertDataToQuestionAnswer
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -49,6 +48,11 @@ def dataFormDataBase(data_form_database_text):
         # print(requestDataFormDataQuestionAnswer())
         socketio.emit("data-form-database", requestDataFormDataQuestionAnswer())
         print("ส่งข้อมูลไปยังไคลเอนต์สำเร็จ")
+    elif str(data_form_database_dictionary_data["mode"]) == "insert":
+        # เพิ่มข้อมูลใหม่ลงในฐานข้อมูล
+        insertDataToQuestionAnswer(data_form_database_dictionary_data)
+        socketio.emit("data-form-database", requestDataFormDataQuestionAnswer())
+        print("ส่งข้อมูลไปยังไคลเอนต์สำเร็จ")
 
 @socketio.on("data-form-sound")
 def dataFormSound():
@@ -78,5 +82,4 @@ def ttsListenWord(tts_listen_word_text):
 
 if __name__ == "__main__":
     loadSound()
-    setLatestQuestions("")
     socketio.run(app, debug=True, host="0.0.0.0")

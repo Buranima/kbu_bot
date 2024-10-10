@@ -57,6 +57,26 @@ def updateDataFormDataQuestionAnswer(update_data_form_data_question_answer_data)
         cursor_database.close()
         connect_database.close()
 
+def insertDataToQuestionAnswer(insert_data_question_answer_data):
+    global connect_database, cursor_database
+    connectDataBase()
+    # แปลงข้อมูลเป็น JSON string และกลับเป็น dictionary
+    insert_data_question_answer_json_string_data = json.dumps(insert_data_question_answer_data, ensure_ascii=False)
+    insert_data_question_answer_json_dictionary_data = json.loads(insert_data_question_answer_json_string_data)
+    # คำสั่ง SQL สำหรับเพิ่มข้อมูลใหม่
+    sql_insert_query = """INSERT INTO data_question_answer (question, answer) VALUES (%s, %s)"""
+    values_insert_query = (str(insert_data_question_answer_json_dictionary_data["question"]), str(insert_data_question_answer_json_dictionary_data["answer"]))
+    try:
+        cursor_database.execute(sql_insert_query, values_insert_query)  # รันคำสั่ง SQL
+        connect_database.commit()  # ยืนยันการเปลี่ยนแปลง
+        print(f"ข้อมูลใหม่ถูกเพิ่มเรียบร้อยแล้ว: {insert_data_question_answer_json_dictionary_data['question']}")
+    except mysql.connector.Error as err:
+        print(f"เกิดข้อผิดพลาด: {err}")
+    finally:
+        cursor_database.close()  # ปิด cursor
+        connect_database.close()  # ปิดการเชื่อมต่อกับฐานข้อมูล
+
+
 if __name__ == "__main__":
     a = requestDataFormDataQuestionAnswer()
     print(str(a))
