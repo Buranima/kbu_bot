@@ -6,6 +6,7 @@ def autoHelp():
     uninstallLibrary()
     installLibrary()
     verifyFolder()
+    print("\nติดตั้งไลบราลีและสร้างโฟลเดอร์สำเร็จ")
 
 if __name__ == "__main__":
     autoHelp()

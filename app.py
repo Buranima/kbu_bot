@@ -5,6 +5,7 @@ import json
 from load_sound import loadSound
 from text_to_speech import textToSpeech
 from database import requestDataFormDataQuestionAnswer, updateDataFormDataQuestionAnswer
+from analyze_questions import setLatestQuestions
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -77,4 +78,5 @@ def ttsListenWord(tts_listen_word_text):
 
 if __name__ == "__main__":
     loadSound()
+    setLatestQuestions("")
     socketio.run(app, debug=True, host="0.0.0.0")

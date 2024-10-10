@@ -1,6 +1,4 @@
 import json
-import subprocess
-import sys
 import os
 
 def loadSound():
@@ -23,7 +21,7 @@ def loadSound():
     if os.path.exists(json_file_path):
         os.remove(json_file_path)
 
-    with open(json_file_path, 'w') as json_file:
+    with open(json_file_path, "w") as json_file:
         json.dump(sound_list, json_file, indent=4)
 
 if __name__ == "__main__":
