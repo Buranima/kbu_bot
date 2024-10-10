@@ -62,6 +62,7 @@ function resetListenWord() {
         listen_word.onend = null;
         listen_word.onresult = null;
         listen_word.stop();
+        ttsQuestion(listen_word_script_edit);
     }
 }
 
@@ -73,6 +74,11 @@ function ttsWakeWord(tts_wake_word_text) {
 function ttsListenWord(tts_listen_word_text) {
     var tts_listen_word_json_data = { speech: tts_listen_word_text };
     kbu_bot_socket.emit("tts-listen-word", tts_listen_word_json_data);
+}
+
+function ttsQuestion(tts_question) {
+    var tts_listen_word_json_data = { speech: tts_question };
+    kbu_bot_socket.emit("tts-question", tts_listen_word_json_data);
 }
 
 function playTTSWakeWord(play_tts_wake_word_directory) {
@@ -87,10 +93,10 @@ function playTTSWakeWord(play_tts_wake_word_directory) {
 function playTTSListenWord(play_tts_listen_word_directory) {
     var play_tts_listen_word_audio = new Audio(play_tts_listen_word_directory + new Date().getTime());
     play_tts_listen_word_audio.play();
-    // play_tts_listen_word_audio.addEventListener('ended', function () {
-    //     // wake_word.start();
-    //     // resetWakeWord();
-    // });
+    play_tts_listen_word_audio.addEventListener('ended', function () {
+        wake_word.start();
+        resetWakeWord();
+    });
 }
 
 kbu_bot_socket.on("play-tts-wake-word", (play_tts_wake_word_json_data) => {

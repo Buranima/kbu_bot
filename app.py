@@ -5,6 +5,7 @@ import json
 from load_sound import loadSound
 from text_to_speech import textToSpeech
 from database import requestDataFormDataQuestionAnswer, updateDataFormDataQuestionAnswer, insertDataToQuestionAnswer
+from analyze_questions import findAnswer
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -78,6 +79,16 @@ def ttsListenWord(tts_listen_word_text):
     tts_listen_word_json_dictionary_data = json.loads(tts_listen_word_json_string_data)
     print(tts_listen_word_json_dictionary_data["speech"])
     textToSpeech(tts_listen_word_json_dictionary_data["speech"])
+    socketio.emit("play-tts-listen-word", '{"directory":"static/temp/text_to_speech.mp3?v="}')
+
+@socketio.on("tts-question")
+def ttsQuestion(tts_question):
+    print(f"ข้อมูลที่ได้รับจาก tts-listen-word คือ {tts_question}")
+    tts_question_json_string_data = json.dumps(tts_question, ensure_ascii=False)
+    tts_question_json_dictionary_data = json.loads(tts_question_json_string_data)
+    print(tts_question_json_dictionary_data["speech"])
+    tts_question_txt = findAnswer(tts_question_json_dictionary_data["speech"])
+    textToSpeech(tts_question_txt + "ค่ะ")
     socketio.emit("play-tts-listen-word", '{"directory":"static/temp/text_to_speech.mp3?v="}')
 
 if __name__ == "__main__":

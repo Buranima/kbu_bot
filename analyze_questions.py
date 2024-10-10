@@ -1,4 +1,3 @@
-# from pythainlp.tokenize import word_tokenize
 from pythainlp.tokenize import word_tokenize
 import os
 import json
@@ -159,10 +158,10 @@ def findAnswer(text_questions):
                 return text_tts
             elif result_score >= json_kbubot_config["passscore"]:
                 setLatestQuestions("")
-                text_tts = "หนูไม่พบคำตอบสำหรับคำถามนี้ค่ะ ผลลัพธ์การค้นหาที่ใกล้เคียงที่สุดคือ " + list_data_json_answer["answer"][max_index]
+                text_tts = "หนูไม่พบคำตอบสำหรับคำถามนี้"
                 return text_tts
             else:
-                text_tts = "หนูไม่เข้าใจคำถามค่ะ"
+                text_tts = "หนูไม่เข้าใจคำถาม"
                 return text_tts
 
         else:
@@ -232,11 +231,11 @@ def findAnswer(text_questions):
                     return text_tts
                 elif result_score >= json_kbubot_config["passscore"]:
                     setLatestQuestions("")
-                    text_tts = "หนูไม่พบคำตอบสำหรับคำถามนี้ค่ะ ผลลัพธ์การค้นหาที่ใกล้เคียงที่สุดคือ " + list_data_json_answer["answer"][max_index]
+                    text_tts = "หนูไม่พบคำตอบสำหรับคำถามนี้"
                     return text_tts
                 else:
                     setLatestQuestions("")
-                    text_tts = "หนูไม่เข้าใจคำถามค่ะ"
+                    text_tts = "หนูไม่เข้าใจคำถาม"
                     return text_tts
 
     else:
@@ -245,7 +244,7 @@ def findAnswer(text_questions):
         if result_score == json_kbubot_config["resultpass"]:
             return text_tts
         else:
-            text_tts = "หนูไม่เข้าใจคำถามค่ะ"
+            text_tts = "หนูไม่เข้าใจคำถาม"
             return text_tts
 
 if __name__ == "__main__":
