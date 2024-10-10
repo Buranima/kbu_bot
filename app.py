@@ -4,7 +4,7 @@ import json
 
 from load_sound import loadSound
 from text_to_speech import textToSpeech
-from database import requestDataFormDataQuestionAnswer, updateDataFormDataQuestionAnswer, insertDataToQuestionAnswer
+from database import requestDataFormDataQuestionAnswer, updateDataFormDataQuestionAnswer, insertDataToQuestionAnswer, deleteDataFromQuestionAnswer
 from analyze_questions import findAnswer
 
 app = Flask(__name__)
@@ -54,6 +54,11 @@ def dataFormDataBase(data_form_database_text):
         insertDataToQuestionAnswer(data_form_database_dictionary_data)
         socketio.emit("data-form-database", requestDataFormDataQuestionAnswer())
         print("ส่งข้อมูลไปยังไคลเอนต์สำเร็จ")
+    elif str(data_form_database_dictionary_data["mode"]) == "delete":
+        deleteDataFromQuestionAnswer(data_form_database_dictionary_data["id"])
+        socketio.emit("data-form-database", requestDataFormDataQuestionAnswer())
+        print("ลบข้อมูลและจัดเรียง ID ใหม่สำเร็จ")
+
 
 @socketio.on("data-form-sound")
 def dataFormSound():

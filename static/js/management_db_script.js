@@ -106,3 +106,25 @@ $('#confirmSaveAdd').on('click', function() {
     $('#confirmSaveModalAdd').modal('hide');
     $('#addModal').modal('hide');
 });
+
+// จัดการคลิกปุ่มลบข้อมูล
+$(document).on('click', '.deleteBtn', function() {
+    var id = $(this).attr('id');
+
+    // แสดงโมเดลยืนยันการลบข้อมูล
+    $('#confirmDeleteModal').modal('show');
+
+    // เมื่อยืนยันการลบ
+    $('#confirmDelete').on('click', function() {
+        var data_form_database_json = {
+            mode: "delete",
+            id: id
+        };
+        
+        // ส่งคำขอไปยังเซิร์ฟเวอร์เพื่อลบข้อมูล
+        kbu_bot_socket.emit("data-form-database", data_form_database_json);
+
+        // ปิดโมเดลยืนยันการลบ
+        $('#confirmDeleteModal').modal('hide');
+    });
+});

@@ -76,7 +76,65 @@ def insertDataToQuestionAnswer(insert_data_question_answer_data):
         cursor_database.close()  # ปิด cursor
         connect_database.close()  # ปิดการเชื่อมต่อกับฐานข้อมูล
 
+def deleteDataFromQuestionAnswer(id_to_delete):
+    global connect_database, cursor_database
+    connectDataBase()
+
+    # ขั้นตอนที่ 1: ลบระเบียนที่มี ID ที่ระบุ
+    sql_delete_query = "DELETE FROM data_question_answer WHERE id = %s"
+    try:
+        cursor_database.execute(sql_delete_query, (id_to_delete,))
+        connect_database.commit()
+        print(f"ข้อมูลที่มี id {id_to_delete} ถูกลบเรียบร้อยแล้ว")
+    except mysql.connector.Error as err:
+        print(f"เกิดข้อผิดพลาดในการลบ: {err}")
+        return
+    finally:
+        cursor_database.close()  # ปิด cursor หลังจากทำงาน
+
+    # ขั้นตอนที่ 2: ปรับ ID ของที่เหลือ
+    sql_update_query = """UPDATE data_question_answer SET id = id - 1 WHERE id > %s"""
+    try:
+        cursor_database = connect_database.cursor()  # สร้าง cursor ใหม่
+        cursor_database.execute(sql_update_query, (id_to_delete,))
+        connect_database.commit()
+    except mysql.connector.Error as err:
+        print(f"เกิดข้อผิดพลาดในการอัปเดต ID: {err}")
+    finally:
+        cursor_database.close()
+
+    # ขั้นตอนที่ 3: รีเซ็ต auto-increment เพื่อให้ ID ใหม่เริ่มต้นจากค่าต่ำสุด
+    cursor_database = connect_database.cursor()
+    cursor_database.execute("SELECT MAX(id) FROM data_question_answer")
+    max_id = cursor_database.fetchone()[0]
+    
+    if max_id is not None:
+        cursor_database.execute(f"ALTER TABLE data_question_answer AUTO_INCREMENT = {max_id + 1};")
+    connect_database.commit()
+    
+    cursor_database.close()
+    connect_database.close()
+
+
+
+
+# # ฟังก์ชันทดสอบการดึงและลบข้อมูล
+# def test_delete_data():
+#     print("ดึงข้อมูลจากฐานข้อมูล:")
+#     data = requestDataFormDataQuestionAnswer()
+#     print(data)
+
+#     # ลบข้อมูลที่มี ID ตามที่กำหนด
+#     delete_data_id = input("กรุณาใส่ ID ของข้อมูลที่ต้องการลบ: ")
+#     deleteDataFromQuestionAnswer(delete_data_id)
+
+#     # ดึงข้อมูลอีกครั้งหลังจากลบ
+#     print("ข้อมูลหลังจากการลบ:")
+#     data_after_delete = requestDataFormDataQuestionAnswer()
+#     print(data_after_delete)
+
 
 if __name__ == "__main__":
     a = requestDataFormDataQuestionAnswer()
     print(str(a))
+    # test_delete_data()
