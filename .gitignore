@@ -3,3 +3,4 @@ extension/__pycache__
 static/temp
 # static/base/sql
 test
+.vscode

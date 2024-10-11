@@ -1,6 +1,7 @@
 sudo apt update 
 sudo apt upgrade -y
 sudo apt install docker docker.io docker-compose -y
+sudo apt install mariadb-client
 sudo apt update
 sudo -i
 mkdir datamariadb
@@ -8,7 +9,7 @@ chmod 777 datamariadb
 cd /root/datamariadb
 nano docker-compose.yml 
 
-version: "3"
+version: "3.1"
 
 services:
    maria:
