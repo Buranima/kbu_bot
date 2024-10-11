@@ -144,10 +144,10 @@ def findAnswer(text_questions):
                 return text_tts
             elif result_score >= json_kbubot_config["passscore"]:
                 setLatestQuestions("")
-                text_tts = "หนูไม่พบคำตอบสำหรับคำถามนี้"
+                text_tts = "หนูยังไม่มั่นใจในคำตอบของคำถามนี้"
                 return text_tts
             else:
-                text_tts = "หนูไม่เข้าใจคำถาม"
+                text_tts = "หนูไม่เข้าใจคำถามนี้"
                 return text_tts
 
         else:
@@ -217,11 +217,11 @@ def findAnswer(text_questions):
                     return text_tts
                 elif result_score >= json_kbubot_config["passscore"]:
                     setLatestQuestions("")
-                    text_tts = "หนูไม่พบคำตอบสำหรับคำถามนี้"
+                    text_tts = "หนูยังไม่มั่นใจในคำตอบของคำถามนี้"
                     return text_tts
                 else:
                     setLatestQuestions("")
-                    text_tts = "หนูไม่เข้าใจคำถาม"
+                    text_tts = "หนูไม่เข้าใจคำถามนี้"
                     return text_tts
 
     else:
@@ -230,7 +230,7 @@ def findAnswer(text_questions):
         if result_score == json_kbubot_config["resultpass"]:
             return text_tts
         else:
-            text_tts = "หนูไม่เข้าใจคำถาม"
+            text_tts = "หนูไม่เข้าใจคำถามนี้"
             return text_tts
 
 if __name__ == "__main__":

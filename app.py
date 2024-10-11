@@ -73,8 +73,7 @@ def ttsWakeWord(tts_wake_word_text):
     tts_wake_word_json_string_data = json.dumps(tts_wake_word_text, ensure_ascii=False)
     tts_wake_word_json_dictionary_data = json.loads(tts_wake_word_json_string_data)
     print(tts_wake_word_json_dictionary_data["speech"])
-    textToSpeech(tts_wake_word_json_dictionary_data["speech"])
-    socketio.emit("play-tts-wake-word", '{"directory":"static/temp/text_to_speech.mp3?v="}')
+    socketio.emit("play-tts-wake-word", textToSpeech(tts_wake_word_json_dictionary_data["speech"]))
 
 @socketio.on("tts-listen-word")
 def ttsListenWord(tts_listen_word_text):
@@ -82,19 +81,30 @@ def ttsListenWord(tts_listen_word_text):
     tts_listen_word_json_string_data = json.dumps(tts_listen_word_text, ensure_ascii=False)
     tts_listen_word_json_dictionary_data = json.loads(tts_listen_word_json_string_data)
     print(tts_listen_word_json_dictionary_data["speech"])
-    textToSpeech(tts_listen_word_json_dictionary_data["speech"])
-    socketio.emit("play-tts-listen-word", '{"directory":"static/temp/text_to_speech.mp3?v="}')
+    socketio.emit("play-tts-listen-word", textToSpeech(tts_listen_word_json_dictionary_data["speech"]))
 
 @socketio.on("tts-question")
 def ttsQuestion(tts_question):
-    print(f"ข้อมูลที่ได้รับจาก tts-listen-word คือ {tts_question}")
+    print(f"ข้อมูลที่ได้รับจาก tts-question คือ {tts_question}")
     tts_question_json_string_data = json.dumps(tts_question, ensure_ascii=False)
     tts_question_json_dictionary_data = json.loads(tts_question_json_string_data)
     print(tts_question_json_dictionary_data["speech"])
     tts_question_txt = findAnswer(tts_question_json_dictionary_data["speech"])
-    textToSpeech(tts_question_txt + "ค่ะ")
-    socketio.emit("play-tts-listen-word", '{"directory":"static/temp/text_to_speech.mp3?v="}')
+    if str(tts_question_txt) == "หนูไม่เข้าใจคำถามนี้":
+        socketio.emit("tts-question", textToSpeech(tts_question_txt + "ค่ะ "))
+    elif str(tts_question_txt) == "หนูยังไม่มั่นใจในคำตอบของคำถามนี้":
+        socketio.emit("tts-question", textToSpeech(tts_question_txt + "ค่ะ กรุณาระบุรายละเอียดของคำถามให้ชัดเจนมากขึ้น เพื่อให้หนูสามารถตอบคำถามนี้ได้ค่ะ"))
+    else:
+        socketio.emit("tts-question", textToSpeech(tts_question_txt + "ค่ะ หากมีอะไรที่ต้องการสอบถามเพิ่มเติม สามารถถามหนูได้เลยนะคะ"))
+
+@socketio.on("load-list-sound")
+def loadListSound(text_sound):
+    print(f"ข้อมูลที่ได้รับจาก load-list-sound คือ {text_sound}")
+    text_sound_string_data = json.dumps(text_sound, ensure_ascii=False)
+    text_sound_dictionary_data = json.loads(text_sound_string_data)
+    print(f'โหมดที่ต้องดำเนินการคือ {text_sound_dictionary_data["mode"]} mode\n')
+    if str(text_sound_dictionary_data["mode"]) == "read":
+        socketio.emit("load-list-sound", loadSound())
 
 if __name__ == "__main__":
-    loadSound()
     socketio.run(app, debug=True, host="0.0.0.0")
