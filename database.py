@@ -18,7 +18,7 @@ def loadQuestionsTokenize(json_database):
     for id in range(len(json_database["id"])):
         data_json["id"].append(json_database["id"][id])
         data_json["question"].append(json_database["question"][id])
-        data_arry = word_tokenize(json_database["question"][id], engine="deepcut")
+        data_arry = word_tokenize(json_database["question"][id], engine="newmm")
         data_json["tokenize"].append(data_arry)
         data_json["answer"].append(json_database["answer"][id])
     with open(questions_tokenize_file_path, "w", encoding="utf-8") as json_file:

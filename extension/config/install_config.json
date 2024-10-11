@@ -4,7 +4,6 @@
         "mysql-connector-python",
         "gTTS",
         "pythainlp",
-        "deepcut",
         "python-crfsuite",
         "python-socketio",
         "Flask-SocketIO"

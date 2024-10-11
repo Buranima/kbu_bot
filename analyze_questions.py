@@ -52,7 +52,7 @@ def findOne(text_questions_find_one):
 
     with open(questions_tokenize_file_path, "r", encoding="utf-8") as file_questions_tokenize:
         questions_tokenize_json = json.load(file_questions_tokenize)
-    list_text_questions = word_tokenize(text_questions_find_one, engine="deepcut")
+    list_text_questions = word_tokenize(text_questions_find_one, engine="newmm")
     for id in range(len(questions_tokenize_json["id"])):
         list_json_questions = questions_tokenize_json["tokenize"][id]
         len_questions_score = (len(list_text_questions) / len(list_json_questions)) * json_kbubot_config["lenpass"]
@@ -104,6 +104,7 @@ def resultAnswer(text_result_answer):
         # print(f"\nคำถามคือ {text_result_answer}")
         # print(f'คำตอบคือ {questions_tokenize_json["answer"][max_id-1]}')
         # print(f"ID ที่มี Result score มากที่สุดคือ ID: {max_id} ด้วยค่า Result score ที่: {max_result}")
+
         setLatestQuestions(questions_tokenize_json["question"][max_id-1])
         text_tts = questions_tokenize_json["answer"][max_id-1]
         return max_result
@@ -111,19 +112,21 @@ def resultAnswer(text_result_answer):
         # print(f"\nคำถามคือ {text_result_answer}")
         # print(f'คำตอบคือ {questions_tokenize_json["answer"][max_id-1]}')
         # print(f"ID ที่มี Result score มากที่สุดคือ ID: {max_id} ด้วยค่า Result score ที่: {max_result}")
+
         setLatestQuestions(questions_tokenize_json["question"][max_id-1])
         return max_result
     else:
         # print(f"\nคำถามคือ {text_result_answer}")
         # print(f'คำตอบที่ไกล้เคียงมากที่สุดคือ {questions_tokenize_json["answer"][max_id-1]}')
         # print(f"ID ที่มี Result score มากที่สุดคือ ID: {max_id} ด้วยค่า Result score ที่: {max_result}")
+
         setLatestQuestions("")
         return max_result
 
 def findAnswer(text_questions):
     global questions_tokenize_file_path, result_questions_file_path, latest_questions_file_path, text_tts
 
-    list_text_questions = word_tokenize(text_questions, engine="deepcut")
+    list_text_questions = word_tokenize(text_questions, engine="newmm")
 
     result_score = 0.0
 
@@ -234,7 +237,7 @@ def findAnswer(text_questions):
             return text_tts
 
 if __name__ == "__main__":
-    tts_result = findAnswer("เครื่องกลล่ะ")
+    tts_result = findAnswer("ไฟฟ้าล่ะ")
     print(f"\n{tts_result}")
-    # print(word_tokenize("วิศวกรรมโยธา", engine="deepcut"))
-    # print(word_tokenize("แล้ววิศวกรรมซ่อมบำรุงล่ะ", engine="deepcut"))
+    # print(word_tokenize("วิศวกรรมโยธา", engine="newmm"))
+    # print(word_tokenize("แล้ววิศวกรรมซ่อมบำรุงล่ะ", engine="newmm"))
