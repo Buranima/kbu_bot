@@ -113,7 +113,8 @@ def resultAnswer(text_result_answer):
         # print(f'คำตอบคือ {questions_tokenize_json["answer"][max_id-1]}')
         # print(f"ID ที่มี Result score มากที่สุดคือ ID: {max_id} ด้วยค่า Result score ที่: {max_result}")
 
-        setLatestQuestions(questions_tokenize_json["question"][max_id-1])
+        # setLatestQuestions(questions_tokenize_json["question"][max_id-1])
+        setLatestQuestions("")
         return max_result
     else:
         # print(f"\nคำถามคือ {text_result_answer}")
@@ -146,8 +147,9 @@ def findAnswer(text_questions):
             if result_score == json_kbubot_config["resultpass"]:
                 return text_tts
             elif result_score >= json_kbubot_config["passscore"]:
-                setLatestQuestions("")
+                setLatestQuestions(questions_tokenize_json["question"][max_id-1])
                 text_tts = "หนูยังไม่มั่นใจในคำตอบของคำถามนี้"
+                # text_tts = list_data_json_answer["answer"][max_index]
                 return text_tts
             else:
                 text_tts = "หนูไม่เข้าใจคำถามนี้"
@@ -219,8 +221,10 @@ def findAnswer(text_questions):
                     text_tts = list_data_json_answer["answer"][max_index]
                     return text_tts
                 elif result_score >= json_kbubot_config["passscore"]:
+                    # setLatestQuestions(questions_tokenize_json["question"][max_id-1])
                     setLatestQuestions("")
                     text_tts = "หนูยังไม่มั่นใจในคำตอบของคำถามนี้"
+                    # text_tts = list_data_json_answer["answer"][max_index]
                     return text_tts
                 else:
                     setLatestQuestions("")
@@ -237,7 +241,7 @@ def findAnswer(text_questions):
             return text_tts
 
 if __name__ == "__main__":
-    tts_result = findAnswer("ไฟฟ้าล่ะ")
+    tts_result = findAnswer("วิศวกรรมโยธาล่ะ")
     print(f"\n{tts_result}")
     # print(word_tokenize("วิศวกรรมโยธา", engine="newmm"))
     # print(word_tokenize("แล้ววิศวกรรมซ่อมบำรุงล่ะ", engine="newmm"))
