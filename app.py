@@ -59,7 +59,6 @@ def dataFormDataBase(data_form_database_text):
         socketio.emit("data-form-database", requestDataFormDataQuestionAnswer())
         print("ลบข้อมูลและจัดเรียง ID ใหม่สำเร็จ")
 
-
 @socketio.on("data-form-sound")
 def dataFormSound():
     pass

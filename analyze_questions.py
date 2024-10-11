@@ -21,21 +21,7 @@ list_data_json_answer = {
 if os.path.exists(questions_tokenize_file_path):
     pass
 else:
-    json_database = json.loads(requestDataFormDataQuestionAnswer())
-    data_json = {
-        "id":[],
-        "question": [],
-        "tokenize": [],
-        "answer":[]
-    }
-    for id in range(len(json_database["id"])):
-        data_json["id"].append(json_database["id"][id])
-        data_json["question"].append(json_database["question"][id])
-        data_arry = word_tokenize(json_database["question"][id], engine="deepcut")
-        data_json["tokenize"].append(data_arry)
-        data_json["answer"].append(json_database["answer"][id])
-    with open(questions_tokenize_file_path, "w", encoding="utf-8") as json_file:
-        json.dump(data_json, json_file, ensure_ascii=False, indent=4)
+    requestDataFormDataQuestionAnswer()
 
 def setLatestQuestions(set_latest_questions):
     global latest_questions_file_path

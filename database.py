@@ -1,12 +1,34 @@
 import mysql.connector
+from pythainlp.tokenize import word_tokenize
 import json
 
 connect_database = None
 cursor_database = None
+
+questions_tokenize_file_path = "static/temp/questions_tokenize.json"
+config_database_file_path = "static/config/json/database_config.json"
+
+def loadQuestionsTokenize(json_database):
+    data_json = {
+        "id":[],
+        "question": [],
+        "tokenize": [],
+        "answer":[]
+    }
+    for id in range(len(json_database["id"])):
+        data_json["id"].append(json_database["id"][id])
+        data_json["question"].append(json_database["question"][id])
+        data_arry = word_tokenize(json_database["question"][id], engine="deepcut")
+        data_json["tokenize"].append(data_arry)
+        data_json["answer"].append(json_database["answer"][id])
+    with open(questions_tokenize_file_path, "w", encoding="utf-8") as json_file:
+        json.dump(data_json, json_file, ensure_ascii=False, indent=4)
+    print(data_json)
+
 def connectDataBase():
     global connect_database, cursor_database
     try:
-        with open("static/config/json/database_config.json", "r") as file_config_database:
+        with open(config_database_file_path, "r") as file_config_database:
             config_database = json.load(file_config_database)
         connect_database = mysql.connector.connect(
             host=config_database["host"][0],
@@ -36,6 +58,7 @@ def requestDataFormDataQuestionAnswer():
         data_json["question"].append(row_form_data_question_answer[1])
         data_json["answer"].append(row_form_data_question_answer[2])
     json_data = json.dumps(data_json, ensure_ascii=False, indent=4)
+    loadQuestionsTokenize(json.loads(json_data))
     cursor_database.close()
     connect_database.close()
     return json_data
@@ -60,27 +83,26 @@ def updateDataFormDataQuestionAnswer(update_data_form_data_question_answer_data)
 def insertDataToQuestionAnswer(insert_data_question_answer_data):
     global connect_database, cursor_database
     connectDataBase()
-    # แปลงข้อมูลเป็น JSON string และกลับเป็น dictionary
+
     insert_data_question_answer_json_string_data = json.dumps(insert_data_question_answer_data, ensure_ascii=False)
     insert_data_question_answer_json_dictionary_data = json.loads(insert_data_question_answer_json_string_data)
-    # คำสั่ง SQL สำหรับเพิ่มข้อมูลใหม่
+
     sql_insert_query = """INSERT INTO data_question_answer (question, answer) VALUES (%s, %s)"""
     values_insert_query = (str(insert_data_question_answer_json_dictionary_data["question"]), str(insert_data_question_answer_json_dictionary_data["answer"]))
     try:
-        cursor_database.execute(sql_insert_query, values_insert_query)  # รันคำสั่ง SQL
-        connect_database.commit()  # ยืนยันการเปลี่ยนแปลง
+        cursor_database.execute(sql_insert_query, values_insert_query)
+        connect_database.commit()
         print(f"ข้อมูลใหม่ถูกเพิ่มเรียบร้อยแล้ว: {insert_data_question_answer_json_dictionary_data['question']}")
     except mysql.connector.Error as err:
         print(f"เกิดข้อผิดพลาด: {err}")
     finally:
-        cursor_database.close()  # ปิด cursor
-        connect_database.close()  # ปิดการเชื่อมต่อกับฐานข้อมูล
+        cursor_database.close()
+        connect_database.close()
 
 def deleteDataFromQuestionAnswer(id_to_delete):
     global connect_database, cursor_database
     connectDataBase()
 
-    # ขั้นตอนที่ 1: ลบระเบียนที่มี ID ที่ระบุ
     sql_delete_query = "DELETE FROM data_question_answer WHERE id = %s"
     try:
         cursor_database.execute(sql_delete_query, (id_to_delete,))
@@ -90,12 +112,11 @@ def deleteDataFromQuestionAnswer(id_to_delete):
         print(f"เกิดข้อผิดพลาดในการลบ: {err}")
         return
     finally:
-        cursor_database.close()  # ปิด cursor หลังจากทำงาน
+        cursor_database.close()
 
-    # ขั้นตอนที่ 2: ปรับ ID ของที่เหลือ
     sql_update_query = """UPDATE data_question_answer SET id = id - 1 WHERE id > %s"""
     try:
-        cursor_database = connect_database.cursor()  # สร้าง cursor ใหม่
+        cursor_database = connect_database.cursor()
         cursor_database.execute(sql_update_query, (id_to_delete,))
         connect_database.commit()
     except mysql.connector.Error as err:
@@ -103,7 +124,6 @@ def deleteDataFromQuestionAnswer(id_to_delete):
     finally:
         cursor_database.close()
 
-    # ขั้นตอนที่ 3: รีเซ็ต auto-increment เพื่อให้ ID ใหม่เริ่มต้นจากค่าต่ำสุด
     cursor_database = connect_database.cursor()
     cursor_database.execute("SELECT MAX(id) FROM data_question_answer")
     max_id = cursor_database.fetchone()[0]
@@ -115,26 +135,6 @@ def deleteDataFromQuestionAnswer(id_to_delete):
     cursor_database.close()
     connect_database.close()
 
-
-
-
-# # ฟังก์ชันทดสอบการดึงและลบข้อมูล
-# def test_delete_data():
-#     print("ดึงข้อมูลจากฐานข้อมูล:")
-#     data = requestDataFormDataQuestionAnswer()
-#     print(data)
-
-#     # ลบข้อมูลที่มี ID ตามที่กำหนด
-#     delete_data_id = input("กรุณาใส่ ID ของข้อมูลที่ต้องการลบ: ")
-#     deleteDataFromQuestionAnswer(delete_data_id)
-
-#     # ดึงข้อมูลอีกครั้งหลังจากลบ
-#     print("ข้อมูลหลังจากการลบ:")
-#     data_after_delete = requestDataFormDataQuestionAnswer()
-#     print(data_after_delete)
-
-
 if __name__ == "__main__":
-    a = requestDataFormDataQuestionAnswer()
-    print(str(a))
-    # test_delete_data()
+    database_view = requestDataFormDataQuestionAnswer()
+    print(database_view)
