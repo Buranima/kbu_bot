@@ -7,8 +7,16 @@ cursor_database = None
 
 questions_tokenize_file_path = "static/temp/questions_tokenize.json"
 config_database_file_path = "static/config/json/database_config.json"
+config_kbubot_file_path = "static/config/json/kbubot_config.json"
+
+with open(config_database_file_path, "r") as file_config_database:
+    config_database = json.load(file_config_database)
+
+with open(config_kbubot_file_path, "r") as file_config_kbubot:
+    config_kbubot = json.load(file_config_kbubot)
 
 def loadQuestionsTokenize(json_database):
+    global config_kbubot
     data_json = {
         "id":[],
         "question": [],
@@ -18,18 +26,16 @@ def loadQuestionsTokenize(json_database):
     for id in range(len(json_database["id"])):
         data_json["id"].append(json_database["id"][id])
         data_json["question"].append(json_database["question"][id])
-        data_arry = word_tokenize(json_database["question"][id], engine="newmm")
+        data_arry = word_tokenize(json_database["question"][id], engine=config_kbubot["engine"][0])
         data_json["tokenize"].append(data_arry)
         data_json["answer"].append(json_database["answer"][id])
     with open(questions_tokenize_file_path, "w", encoding="utf-8") as json_file:
         json.dump(data_json, json_file, ensure_ascii=False, indent=4)
-    print(data_json)
+    # print(data_json)
 
 def connectDataBase():
-    global connect_database, cursor_database
+    global connect_database, cursor_database, config_database
     try:
-        with open(config_database_file_path, "r") as file_config_database:
-            config_database = json.load(file_config_database)
         connect_database = mysql.connector.connect(
             host=config_database["host"][0],
             user=config_database["user"][0],

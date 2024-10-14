@@ -60,3 +60,14 @@ body {
   margin-left: 10%;
   width: 80%;
 }
+
+.text_speech {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+h1 {
+  font-size: 1.5em;
+}

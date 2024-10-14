@@ -12,13 +12,20 @@ listen_word.interimResults = false;
 listen_word.continuous = false;
 listen_word.maxAlternatives = 1;
 
-var play_text_continue_audio = null;
+var chat_word = new webkitSpeechRecognition();
+chat_word.lang = "th-TH";
+chat_word.interimResults = false;
+chat_word.continuous = false;
+chat_word.maxAlternatives = 1;
+
+var play_text_continue_audio = new Audio("static/base/sound/march_KBU.mp3");
 var list_sound_background = null;
 var continue_play = 1;
 var continue_animation = 1;
 var config_bot_json = null;
 
 function resetWakeWord() {
+    changeText('พูดว่า "สวัสดีน้องเกษม"');
     wake_word.onend = function () {
         wake_word.start();
     }
@@ -33,7 +40,7 @@ function resetWakeWord() {
             wake_word_script_edit = wake_word_script_edit.replace(" ", "");
             console.log(wake_word_script_edit);
 
-            if (wake_word_script_edit.includes("สวัสดี" + config_bot_json["wakeword"])) {
+            if (wake_word_script_edit.includes("สวัสดี" + config_bot_json["wakeword"][0])) {
                 continue_animation = 0;
                 autoAnimationEye();
                 playAudioBackground("no");
@@ -43,7 +50,7 @@ function resetWakeWord() {
                 ttsWakeWord("สวัสดีค่ะ มีอะไรให้หนูช่วยมั้ยคะ");
                 break;
             }
-            else if (wake_word_script_edit.includes(config_bot_json["wakeword"])) {
+            else if (wake_word_script_edit.includes(config_bot_json["wakeword"][0])) {
                 continue_animation = 0;
                 autoAnimationEye();
                 playAudioBackground("no");
@@ -62,6 +69,7 @@ function resetListenWord() {
         listen_word.onend = null;
         listen_word.onresult = null;
         listen_word.stop();
+        setLatestChatBot();
         ttsListenWord("หากมีคำถามที่ต้องการถามสามารถเรียกหนูได้เลยนะคะ");
     }
     listen_word.onresult = function (listen_word_event) {
@@ -72,6 +80,7 @@ function resetListenWord() {
         listen_word_script_edit = listen_word_script_edit.replace("จ้ะ", "");
         listen_word_script_edit = listen_word_script_edit.replace(" ", "");
         console.log(listen_word_script_edit);
+        changeText(listen_word_script_edit);
         listen_word.onend = null;
         listen_word.onresult = null;
         listen_word.stop();
@@ -91,15 +100,58 @@ function resetListenWord() {
             continue_play = 0;
             ttsListenWord("หนูปิดเพลงประกอบให้แล้วค่ะ")
         }
+        else if (listen_word_script_edit == "คุยกับ" + config_bot_json["wakeword"][0]) {
+            changeImage("process");
+            changeText('ยินดีต้นรับสู่แชท' + config_bot_json["wakeword"][0]);
+            chatBot();
+        }
         else if (listen_word_script_edit == "โหลดโปรแกรมใหม่") {
-            continue_play = 0;
             location.reload();
+        }
+        else if (listen_word_script_edit == "โหลดแชทใหม่") {
+            setLatestChatBot();
+            chatBot();
         }
         else {
             changeImage("process");
             ttsQuestion(listen_word_script_edit);
         }
+    }
+}
 
+function resetChat() {
+    chat_word.onend = function () {
+        chat_word.onend = null;
+        chat_word.onresult = null;
+        chat_word.stop();
+        setLatestChatBot();
+        ttsListenWord("หากมีคำถามที่ต้องการถามสามารถเรียกหนูได้เลยนะคะ");
+    }
+    chat_word.onresult = function (chat_word_event) {
+        var chat_word_script = chat_word_event.results[0][0].transcript;
+        var chat_word_script_edit = chat_word_script.replace("ครับ", "");
+        chat_word_script_edit = chat_word_script_edit.replace("ค่ะ", "");
+        chat_word_script_edit = chat_word_script_edit.replace("จ้า", "");
+        chat_word_script_edit = chat_word_script_edit.replace("จ้ะ", "");
+        chat_word_script_edit = chat_word_script_edit.replace(" ", "");
+        console.log(chat_word_script_edit);
+        changeText(chat_word_script_edit);
+        chat_word.onend = null;
+        chat_word.onresult = null;
+        chat_word.stop();
+        if (chat_word_script_edit == "หยุดคุยกับ" + config_bot_json["wakeword"][0]) {
+            continue_play = 0;
+            setLatestChatBot();
+            ttsListenWord("แล้วกลับมาคุยกับหนูใหม่นะคะ")
+        }
+        else if (chat_word_script_edit == "โหลดโปรแกรมใหม่") {
+            continue_play = 0;
+            location.reload();
+        }
+        else {
+            changeImage("process");
+            ttsChatBot(chat_word_script_edit);
+        }
     }
 }
 
@@ -139,6 +191,15 @@ function loadListSound(text_sound) {
     kbu_bot_socket.emit("load-list-sound", text_sound_json_data);
 }
 
+function chatBot() {
+    ttsChatBot("สวัสดี");
+}
+
+function ttsChatBot(tts_chat_bot) {
+    var tts_chat_bot_json_data = { mode: "TTS", speech: tts_chat_bot };
+    kbu_bot_socket.emit("tts-chat-bot", tts_chat_bot_json_data);
+}
+
 function playTTSWakeWord(play_tts_wake_word_directory) {
     changeImage("speak");
     var play_tts_wake_word_audio = new Audio(play_tts_wake_word_directory + new Date().getTime());
@@ -146,6 +207,7 @@ function playTTSWakeWord(play_tts_wake_word_directory) {
     play_tts_wake_word_audio.addEventListener("ended", function () {
         changeImage("listen");
         listen_word.start();
+        changeText('กำลังฟัง...');
         resetListenWord();
         continue_animation = 0;
         autoAnimationEye();
@@ -154,6 +216,7 @@ function playTTSWakeWord(play_tts_wake_word_directory) {
 
 function playTTSListenWord(play_tts_listen_word_directory) {
     changeImage("speak");
+    changeText('กำลังตอบ...');
     var play_tts_listen_word_audio = new Audio(play_tts_listen_word_directory + new Date().getTime());
     play_tts_listen_word_audio.play();
     play_tts_listen_word_audio.addEventListener("ended", function () {
@@ -168,12 +231,29 @@ function playTTSListenWord(play_tts_listen_word_directory) {
 
 function playTTSQuestion(play_tts_question_directory) {
     changeImage("speak");
+    changeText('กำลังตอบ...');
     var play_tts_question_audio = new Audio(play_tts_question_directory + new Date().getTime());
     play_tts_question_audio.play();
     play_tts_question_audio.addEventListener("ended", function () {
         changeImage("listen");
         listen_word.start();
+        changeText('กำลังฟัง...');
         resetListenWord();
+        continue_animation = 0;
+        autoAnimationEye();
+    });
+}
+
+function playTTSChatBot(play_chat_bot_directory) {
+    changeImage("speak");
+    changeText('กำลังตอบ...');
+    var play_chat_bot_audio = new Audio(play_chat_bot_directory + new Date().getTime());
+    play_chat_bot_audio.play();
+    play_chat_bot_audio.addEventListener("ended", function () {
+        changeImage("listen");
+        chat_word.start();
+        changeText('กำลังฟัง...');
+        resetChat();
         continue_animation = 0;
         autoAnimationEye();
     });
@@ -181,6 +261,7 @@ function playTTSQuestion(play_tts_question_directory) {
 
 function playAudioBackground(text_continue) {
     if (text_continue == "yes") {
+        // console.log(continue_play);
         if (continue_play == 1) {
             var length_num = (list_sound_background["sound"].length) - 1;
             var random_num = Math.floor(Math.random() * ((length_num - 0) + 1)) + 0;
@@ -194,9 +275,12 @@ function playAudioBackground(text_continue) {
         }
     }
     else if (text_continue == "no") {
-        play_text_continue_audio.addEventListener("ended", function () {
-        });
-        play_text_continue_audio.pause();
+        // console.log(continue_play);
+        if (!play_text_continue_audio.paused) {
+            play_text_continue_audio.addEventListener("ended", function () {
+            });
+            play_text_continue_audio.pause();
+        }
     }
 }
 
@@ -254,6 +338,15 @@ function autoAnimationEye() {
     }, Math.floor(Math.random() * (((6 * 60 * 10) - (1 * 60 * 10)) + 1)) + (1 * 60 * 10));
 }
 
+function setLatestChatBot() {
+    var set_latest_chat_bot_json_data = { mode: "SetLatestChatBot" };
+    kbu_bot_socket.emit("tts-chat-bot", set_latest_chat_bot_json_data);
+}
+
+function changeText(change_text) {
+    document.getElementById("dynamicText").innerHTML = change_text;
+}
+
 kbu_bot_socket.on("play-tts-wake-word", (play_tts_wake_word_json_data) => {
     playAudioBackground("no");
     playTTSWakeWord(play_tts_wake_word_json_data["directory"]);
@@ -271,7 +364,18 @@ kbu_bot_socket.on("tts-question", (play_tts_question_json_data) => {
 
 kbu_bot_socket.on("load-list-sound", (load_list_sound_json_data) => {
     list_sound_background = load_list_sound_json_data;
-    playAudioBackground("yes");
+    continue_play = config_bot_json["playsound"]
+    if (continue_play == 1) {
+        playAudioBackground("yes");
+    }
+    else {
+        playAudioBackground("no");
+    }
+});
+
+kbu_bot_socket.on("tts-chat-bot", (play_tts_chat_bot_json_data) => {
+    playAudioBackground("no");
+    playTTSChatBot(play_tts_chat_bot_json_data["directory"]);
 });
 
 loadConfigJson()
@@ -282,3 +386,5 @@ resetWakeWord();
 loadListSound("read");
 
 autoAnimationEye();
+
+setLatestChatBot();

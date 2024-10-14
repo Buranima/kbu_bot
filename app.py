@@ -6,6 +6,7 @@ from load_sound import loadSound
 from text_to_speech import textToSpeech
 from database import requestDataFormDataQuestionAnswer, updateDataFormDataQuestionAnswer, insertDataToQuestionAnswer, deleteDataFromQuestionAnswer
 from analyze_questions import findAnswer
+from search_by_typhoon import chatByTyphoon, setLatestQuestionsByTyphoon
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -91,11 +92,23 @@ def ttsQuestion(tts_question):
     print(tts_question_json_dictionary_data["speech"])
     tts_question_txt = findAnswer(tts_question_json_dictionary_data["speech"])
     if str(tts_question_txt) == "หนูไม่เข้าใจคำถามนี้":
-        socketio.emit("tts-question", textToSpeech(tts_question_txt + "ค่ะ "))
+        socketio.emit("tts-question", textToSpeech(tts_question_txt + "ค่ะ"))
     elif str(tts_question_txt) == "หนูยังไม่มั่นใจในคำตอบของคำถามนี้":
         socketio.emit("tts-question", textToSpeech(tts_question_txt + "ค่ะ กรุณาระบุรายละเอียดของคำถามให้ชัดเจนมากขึ้น เพื่อให้หนูสามารถตอบคำถามนี้ได้ค่ะ"))
     else:
-        socketio.emit("tts-question", textToSpeech(tts_question_txt + "ค่ะ หากมีอะไรที่ต้องการสอบถามเพิ่มเติม สามารถถามหนูได้เลยนะคะ"))
+        socketio.emit("tts-question", textToSpeech(tts_question_txt + "ค่ะ ต้องการสอบถามเพิ่มเติมมั้ยคะ"))
+
+@socketio.on("tts-chat-bot")
+def ttsChatBot(tts_chat_bot):
+    print(f"ข้อมูลที่ได้รับจาก tts-chat-bot คือ {tts_chat_bot}")
+    tts_chat_bot_json_string_data = json.dumps(tts_chat_bot, ensure_ascii=False)
+    tts_chat_bot_json_dictionary_data = json.loads(tts_chat_bot_json_string_data)
+    if str(tts_chat_bot_json_dictionary_data["mode"]) == "TTS":
+        print(tts_chat_bot_json_dictionary_data["speech"])
+        tts_chat_bot_txt = chatByTyphoon(tts_chat_bot_json_dictionary_data["speech"])
+        socketio.emit("tts-chat-bot", textToSpeech(tts_chat_bot_txt + "ค่ะ"))
+    else:
+        setLatestQuestionsByTyphoon()
 
 @socketio.on("load-list-sound")
 def loadListSound(text_sound):

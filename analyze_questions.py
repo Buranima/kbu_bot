@@ -3,12 +3,13 @@ import os
 import json
 
 from database import requestDataFormDataQuestionAnswer
+from search_by_typhoon import findAnswerByTyphoon
 
 latest_questions_file_path = "static/temp/latest_questions.json"
 questions_tokenize_file_path = "static/temp/questions_tokenize.json"
 result_questions_file_path = "static/temp/result_questions.json"
-kbubot_config_file_path = "static/config/json/kbubot_config.json"
 list_data_file_path = "static/temp/list_data.json"
+kbubot_config_file_path = "static/config/json/kbubot_config.json"
 
 text_tts = ""
 
@@ -17,6 +18,9 @@ list_data_json_answer = {
     "answer": [],
     "result":[]
 }
+
+with open(kbubot_config_file_path, "r", encoding="utf-8") as json_kbubot_config_file:
+    json_kbubot_config = json.load(json_kbubot_config_file)
 
 if os.path.exists(questions_tokenize_file_path):
     pass
@@ -35,10 +39,7 @@ else:
     setLatestQuestions("")
 
 def findOne(text_questions_find_one):
-    global questions_tokenize_file_path, result_questions_file_path, latest_questions_file_path
-
-    with open(kbubot_config_file_path, "r", encoding="utf-8") as json_kbubot_config_file:
-                json_kbubot_config = json.load(json_kbubot_config_file)
+    global questions_tokenize_file_path, result_questions_file_path, latest_questions_file_path, json_kbubot_config
 
     len_questions_score = 0.0
     like_questions_score = 0.0
@@ -52,7 +53,7 @@ def findOne(text_questions_find_one):
 
     with open(questions_tokenize_file_path, "r", encoding="utf-8") as file_questions_tokenize:
         questions_tokenize_json = json.load(file_questions_tokenize)
-    list_text_questions = word_tokenize(text_questions_find_one, engine="newmm")
+    list_text_questions = word_tokenize(text_questions_find_one, engine=json_kbubot_config["engine"][0])
     for id in range(len(questions_tokenize_json["id"])):
         list_json_questions = questions_tokenize_json["tokenize"][id]
         len_questions_score = (len(list_text_questions) / len(list_json_questions)) * json_kbubot_config["lenpass"]
@@ -86,16 +87,13 @@ def findOne(text_questions_find_one):
         json.dump(data_json, json_file, indent=4)
 
 def resultAnswer(text_result_answer):
-    global text_tts
+    global text_tts, json_kbubot_config, questions_tokenize_file_path, result_questions_file_path
 
     with open(questions_tokenize_file_path, "r", encoding="utf-8") as file_questions_tokenize:
         questions_tokenize_json = json.load(file_questions_tokenize)
 
     with open(result_questions_file_path, "r") as json_file:
         result_questions_json = json.load(json_file)
-
-    with open(kbubot_config_file_path, "r", encoding="utf-8") as json_kbubot_config_file:
-        json_kbubot_config = json.load(json_kbubot_config_file)
     
     max_result = max(result_questions_json["result"])
     max_index = result_questions_json["result"].index(max_result)
@@ -123,11 +121,11 @@ def resultAnswer(text_result_answer):
 
         setLatestQuestions("")
         return max_result
+    
+def findByKBUBot(text_questions):
+    global questions_tokenize_file_path, result_questions_file_path, latest_questions_file_path, text_tts, json_kbubot_config
 
-def findAnswer(text_questions):
-    global questions_tokenize_file_path, result_questions_file_path, latest_questions_file_path, text_tts
-
-    list_text_questions = word_tokenize(text_questions, engine="newmm")
+    list_text_questions = word_tokenize(text_questions, engine=json_kbubot_config["engine"][0])
 
     result_score = 0.0
 
@@ -136,9 +134,6 @@ def findAnswer(text_questions):
 
     with open(questions_tokenize_file_path, "r", encoding="utf-8") as file_questions_tokenize:
         questions_tokenize_json = json.load(file_questions_tokenize)
-
-    with open(kbubot_config_file_path, "r", encoding="utf-8") as json_kbubot_config_file:
-                json_kbubot_config = json.load(json_kbubot_config_file)
 
     if os.path.exists(result_questions_file_path):
         if questions_latest_json["latest"] == "":
@@ -240,8 +235,29 @@ def findAnswer(text_questions):
             text_tts = "หนูไม่เข้าใจคำถามนี้"
             return text_tts
 
+def findAnswer(text_questions_find_answer):
+    global text_tts, json_kbubot_config
+
+    if json_kbubot_config["search"][1] == "kbubot":
+        findByKBUBot(text_questions_find_answer)
+    else:
+        text_tts = findAnswerByTyphoon(text_questions_find_answer)
+
+    new_text_tts = text_tts.replace("ครับ", "")
+    new_text_tts = new_text_tts.replace("ค่ะ", "")
+    new_text_tts = new_text_tts.replace("คะ", "")
+    new_text_tts = new_text_tts.replace("!", "")
+    new_text_tts = new_text_tts.replace(":", "")
+    new_text_tts = new_text_tts.replace(",", "")
+    new_text_tts = new_text_tts.replace("ผม", "หนู")
+    new_text_tts = new_text_tts.replace("ฉัน", "หนู")
+    new_text_tts = new_text_tts.replace("\n", " ")
+    new_text_tts = new_text_tts.replace("\t", " ")
+    
+    return new_text_tts
+
 if __name__ == "__main__":
-    tts_result = findAnswer("วิศวกรรมโยธาล่ะ")
+    tts_result = findAnswer("สวัสดี")
     print(f"\n{tts_result}")
-    # print(word_tokenize("วิศวกรรมโยธา", engine="newmm"))
-    # print(word_tokenize("แล้ววิศวกรรมซ่อมบำรุงล่ะ", engine="newmm"))
+    # print(word_tokenize("วิศวกรรมโยธา", engine=json_kbubot_config["engine"][0]))
+    # print(word_tokenize("แล้ววิศวกรรมซ่อมบำรุงล่ะ", engine=json_kbubot_config["engine"][0]))
