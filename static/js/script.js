@@ -161,6 +161,9 @@ function resetListenWord() {
         else if (listen_word_script_edit == "ไม่มี") {
             ttsListenWord("แล้วเจอกันใหม่นะคะ");
         }
+        else if (listen_word_script_edit == "ไม่") {
+            ttsListenWord("แล้วเจอกันใหม่นะคะ");
+        }
         else {
             changeImage("process");
             ttsQuestion(listen_word_script_edit);
