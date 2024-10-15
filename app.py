@@ -23,9 +23,9 @@ def index():
 def managementDB():
     return render_template("management_db.html")
 
-@app.route("/control")
-def controlKBUBot():
-    return render_template("control.html")
+# @app.route("/control")
+# def controlKBUBot():
+#     return render_template("control.html")
 
 @socketio.on("data-form-database")
 def dataFormDataBase(data_form_database_text):
