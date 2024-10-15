@@ -24,11 +24,13 @@ kbu_bot_socket.on("data-form-database", (on_data_form_database_json) => {
 
     // วาด DataTable ใหม่หลังจากเพิ่มข้อมูล
     table.draw();
+    
 });
 
 // ส่งคำขอข้อมูลจากฐานข้อมูล โดยกำหนด mode เป็น "read" เพื่อดึงข้อมูล
 var data_form_database_json = { mode: "read" };
 kbu_bot_socket.emit("data-form-database", data_form_database_json);
+
 
 // จัดการคลิกปุ่มแก้ไขข้อมูล
 $(document).on('click', '.editBtn', function() {

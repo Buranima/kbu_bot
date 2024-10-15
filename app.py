@@ -23,7 +23,7 @@ def index():
 def management():
     return render_template("management.html")
 
-@app.route("/management_db")
+@app.route("/db")
 def managementDB():
     return render_template("management_db.html")
 
