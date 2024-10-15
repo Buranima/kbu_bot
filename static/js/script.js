@@ -164,6 +164,14 @@ function resetListenWord() {
         else if (listen_word_script_edit == "ไม่") {
             ttsListenWord("แล้วเจอกันใหม่นะคะ");
         }
+        else if (listen_word_script_edit == "เปิดคอนโซล") {
+            f12("เปิดคอนโซล");
+            ttsListenWord("หนูเปิดคอนโซลให้แล้วค่ะ");
+        }
+        else if (listen_word_script_edit == "ปิดคอนโซล") {
+            f12("ปิดคอนโซล");
+            ttsListenWord("หนูปิดคอนโซลให้แล้วค่ะ");
+        }
         else {
             changeImage("process");
             ttsQuestion(listen_word_script_edit);
@@ -250,6 +258,11 @@ function chatBot() {
 function ttsChatBot(tts_chat_bot) {
     var tts_chat_bot_json_data = { mode: "TTS", speech: tts_chat_bot };
     kbu_bot_socket.emit("tts-chat-bot", tts_chat_bot_json_data);
+}
+
+function f12(text_f12) {
+    var text_f12_json_data = { key: text_f12 };
+    kbu_bot_socket.emit("F12", text_f12_json_data);
 }
 
 function playTTSWakeWord(play_tts_wake_word_directory) {

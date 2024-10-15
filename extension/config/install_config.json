@@ -6,6 +6,7 @@
         "pythainlp",
         "python-crfsuite",
         "python-socketio",
-        "Flask-SocketIO"
+        "Flask-SocketIO",
+        "pyautogui"
     ]
 }

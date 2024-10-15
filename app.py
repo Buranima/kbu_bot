@@ -1,6 +1,11 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO
+import pyautogui
 import json
+import webbrowser
+import threading
+import time
+import subprocess
 
 from load_sound import loadSound
 from text_to_speech import textToSpeech
@@ -22,10 +27,6 @@ def index():
 @app.route("/db")
 def managementDB():
     return render_template("management_db.html")
-
-# @app.route("/control")
-# def controlKBUBot():
-#     return render_template("control.html")
 
 @socketio.on("data-form-database")
 def dataFormDataBase(data_form_database_text):
@@ -51,14 +52,6 @@ def dataFormDataBase(data_form_database_text):
         deleteDataFromQuestionAnswer(data_form_database_dictionary_data["id"])
         socketio.emit("data-form-database", requestDataFormDataQuestionAnswer())
         print("ลบข้อมูลและจัดเรียง ID ใหม่สำเร็จ")
-
-@socketio.on("data-form-sound")
-def dataFormSound():
-    pass
-
-@socketio.on("data-form-config")
-def dataFormConfig():
-    pass
 
 @socketio.on("tts-wake-word")
 def ttsWakeWord(tts_wake_word_text):
@@ -111,5 +104,24 @@ def loadListSound(text_sound):
     if str(text_sound_dictionary_data["mode"]) == "read":
         socketio.emit("load-list-sound", loadSound())
 
+@socketio.on("F12")
+def f12(text_f12):
+    print(f"ข้อมูลที่ได้รับจาก F12 คือ {text_f12}")
+    pyautogui.press("f12")
+
+def open_browser():
+    webbrowser.open("http://127.0.0.1:5000")
+    time.sleep(1)
+    pyautogui.press("f11")
+
+def startROS():
+    commandROS = "ros2 launch test_pkg laser.launch.py"
+    processROS = subprocess.Popen(commandROS, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = processROS.communicate()
+    print("Output:\n", stdout.decode())
+    print("Error:\n", stderr.decode())
+
 if __name__ == "__main__":
-    socketio.run(app, debug=True, host="0.0.0.0")
+    threading.Timer(0, startROS).start()
+    threading.Timer(1.25, open_browser).start()
+    socketio.run(app, debug=False, host="0.0.0.0")
