@@ -4,3 +4,5 @@ static/temp
 # static/base/sql
 test
 .vscode
+static/css/test_style.css
+templates/test.html

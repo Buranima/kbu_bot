@@ -19,21 +19,13 @@ def test():
 def index():
     return render_template("index.html")
 
-@app.route("/management")
-def management():
-    return render_template("management.html")
-
 @app.route("/db")
 def managementDB():
     return render_template("management_db.html")
 
-@app.route("/management_sound")
-def managementSound():
-    return render_template("management_sound.html")
-
-@app.route("/management_config")
-def managementConfig():
-    return render_template("management_config.html")
+@app.route("/control")
+def controlKBUBot():
+    return render_template("control.html")
 
 @socketio.on("data-form-database")
 def dataFormDataBase(data_form_database_text):
