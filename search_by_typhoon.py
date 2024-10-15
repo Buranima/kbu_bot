@@ -9,7 +9,7 @@ latest_questions_by_typhoon_file_path = "static/temp/latest_questions_by_typhoon
 
 latest_questions_by_typhoon = None
 
-with open(config_kbubot_file_path, "r") as file_config_kbubot:
+with open(config_kbubot_file_path, "r", encoding="utf-8") as file_config_kbubot:
     config_kbubot = json.load(file_config_kbubot)
 
 data_database = json.loads(requestDataFormDataQuestionAnswer())
@@ -53,7 +53,7 @@ def findAnswerByTyphoon(text_questions_message):
         "min_p": 0.05
     }
 
-    with open(latest_questions_by_typhoon_file_path, "r") as file_latest_questions_by_typhoon:
+    with open(latest_questions_by_typhoon_file_path, "r", encoding="utf-8") as file_latest_questions_by_typhoon:
         latest_questions_by_typhoon = json.load(file_latest_questions_by_typhoon)
 
     new_message = {"role": "user", "content": f"{text_questions_message}"}
@@ -98,7 +98,7 @@ def chatByTyphoon(text_questions_message_chat):
         "min_p": 0
     }
 
-    with open(latest_questions_by_typhoon_file_path, "r") as file_latest_questions_by_typhoon:
+    with open(latest_questions_by_typhoon_file_path, "r", encoding="utf-8") as file_latest_questions_by_typhoon:
         latest_questions_by_typhoon = json.load(file_latest_questions_by_typhoon)
 
     new_message = {"role": "user", "content": f"{text_questions_message_chat}"}

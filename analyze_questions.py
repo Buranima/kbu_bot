@@ -83,7 +83,7 @@ def findOne(text_questions_find_one):
         like_questions_score = 0.0
         position_questions_score = 0.0
         sum_score = 0.0
-    with open(result_questions_file_path, "w") as json_file:
+    with open(result_questions_file_path, "w", encoding="utf-8") as json_file:
         json.dump(data_json, json_file, indent=4)
 
 def resultAnswer(text_result_answer):
@@ -92,7 +92,7 @@ def resultAnswer(text_result_answer):
     with open(questions_tokenize_file_path, "r", encoding="utf-8") as file_questions_tokenize:
         questions_tokenize_json = json.load(file_questions_tokenize)
 
-    with open(result_questions_file_path, "r") as json_file:
+    with open(result_questions_file_path, "r", encoding="utf-8") as json_file:
         result_questions_json = json.load(json_file)
     
     max_result = max(result_questions_json["result"])
@@ -153,7 +153,7 @@ def findByKBUBot(text_questions):
         else:
             findOne(text_questions)
 
-            with open(result_questions_file_path, "r") as json_file:
+            with open(result_questions_file_path, "r", encoding="utf-8") as json_file:
                 result_questions_json = json.load(json_file)
             
             max_result = max(result_questions_json["result"])
@@ -180,7 +180,7 @@ def findByKBUBot(text_questions):
                         findOne("".join(temp_list))
                         result_score = resultAnswer("".join(temp_list))
 
-                        with open(result_questions_file_path, "r") as json_file:
+                        with open(result_questions_file_path, "r", encoding="utf-8") as json_file:
                             result_questions_json = json.load(json_file)
 
                         max_result = max(result_questions_json["result"])

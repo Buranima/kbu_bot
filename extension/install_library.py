@@ -3,7 +3,7 @@ import subprocess
 import sys
 
 def installLibrary():
-    with open("extension/config/install_config.json", "r") as file:
+    with open("extension/config/install_config.json", "r", encoding="utf-8") as file:
         data = json.load(file)
 
     if "extension_install" in data:

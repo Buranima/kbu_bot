@@ -9,10 +9,10 @@ questions_tokenize_file_path = "static/temp/questions_tokenize.json"
 config_database_file_path = "static/config/json/database_config.json"
 config_kbubot_file_path = "static/config/json/kbubot_config.json"
 
-with open(config_database_file_path, "r") as file_config_database:
+with open(config_database_file_path, "r", encoding="utf-8") as file_config_database:
     config_database = json.load(file_config_database)
 
-with open(config_kbubot_file_path, "r") as file_config_kbubot:
+with open(config_kbubot_file_path, "r", encoding="utf-8") as file_config_kbubot:
     config_kbubot = json.load(file_config_kbubot)
 
 def loadQuestionsTokenize(json_database):

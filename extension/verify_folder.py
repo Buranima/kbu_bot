@@ -3,7 +3,7 @@ import json
 
 def verifyFolder():
     def load_folder_structure(json_file):
-        with open(json_file, "r") as f:
+        with open(json_file, "r", encoding="utf-8") as f:
             return json.load(f)
 
     def create_folders(base_path, structure):
