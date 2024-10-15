@@ -12,14 +12,16 @@ latest_questions_by_typhoon = None
 with open(config_kbubot_file_path, "r", encoding="utf-8") as file_config_kbubot:
     config_kbubot = json.load(file_config_kbubot)
 
-data_database = json.loads(requestDataFormDataQuestionAnswer())
+data_database = None
+content_system = ""
 
-content_system = f"จงใช้ข้อมูลต่อไปนี้ในการตอบคำถาม\n"
-
-for id_text in data_database["id"]:
-    content_system = content_system + f"{id_text}. {data_database['question'][id_text-1]} คำตอบ {data_database['answer'][id_text-1]}\n"
-
-content_system = content_system + "หากสิ่งที่ถามไม่อยู่ในข้อมูลที่ให้ ให้ตอบว่าหนูไม่ทราบคำตอบของคำถามนี้"
+def loadData():
+    global data_database, content_system
+    data_database = json.loads(requestDataFormDataQuestionAnswer())
+    content_system = f"จงใช้ข้อมูลต่อไปนี้ในการตอบคำถาม\n"
+    for id_text in data_database["id"]:
+        content_system = content_system + f"{id_text}. {data_database['question'][id_text-1]} คำตอบ {data_database['answer'][id_text-1]}\n"
+    content_system = content_system + "หากสิ่งที่ถามไม่อยู่ในข้อมูลที่ให้ ให้ตอบว่าหนูไม่ทราบคำตอบของคำถามนี้"
 
 endpoint = "https://api.opentyphoon.ai/v1/chat/completions"
 headers = {
@@ -39,6 +41,7 @@ else:
 
 
 def findAnswerByTyphoon(text_questions_message):
+    loadData()
     data_answer = {
         "model": "typhoon-v1.5-instruct",
         "max_tokens": 512,
@@ -143,6 +146,6 @@ def chatByTyphoon(text_questions_message_chat):
     return new_text_tts
     
 if __name__ == "__main__":
-    findAnswerByTyphoon("ค่าหอกี่บาท")
+    findAnswerByTyphoon("หัวหน้าสาขาคอมคือใคร")
     # chatByTyphoon("ขอสถานที่เที่ยวในน่าน")
     # setLatestQuestionsByTyphoon()
