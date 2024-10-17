@@ -12,7 +12,8 @@ from text_to_speech import textToSpeech
 from database import requestDataFormDataQuestionAnswer, updateDataFormDataQuestionAnswer, insertDataToQuestionAnswer, deleteDataFromQuestionAnswer
 from analyze_questions import findAnswer
 from search_by_typhoon import chatByTyphoon, setLatestQuestionsByTyphoon
-from microphone import check_microphone
+# from microphone import check_microphone
+from ros import f_read_config, f_update_config, f_update_config_arry, f_default, f_route
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -21,13 +22,13 @@ socketio = SocketIO(app)
 def index():
     return render_template("index.html")
 
-@app.route("/test")
-def f_test():
-    return render_template("test.html")
+@app.route("/ctn")
+def controlPanel():
+    return render_template("ctn.html")
 
 @app.route("/db")
 def managementDB():
-    return render_template("management_db.html")
+    return render_template("db.html")
 
 def open_browser():
     webbrowser.open("http://127.0.0.1:5000")
@@ -97,15 +98,24 @@ def f_KBU_mode(message):
         result["result"] = requestDataFormDataQuestionAnswer()
 
     elif str(message_dictionary["mode"]) == "STATUS":
+        f_update_config("status", message_dictionary["status"])
+        if str(message_dictionary["status"]) == "stop":
+            f_update_config("control", "stop")
         result["result"] = message_dictionary["status"]
         socketio.emit("SERVER-ROS", result)
-        # socketio.emit("SERVER-CONTROI-PANEL", result)
+        result = None
+        result = {
+            "mode": message_dictionary["mode"],
+            "result": None
+        }
+        result["result"] = f_read_config()
+        socketio.emit("SERVER-CONTROL-PANEL", result)
         return
     
     elif str(message_dictionary["mode"]) == "COMMAND":
+        f_update_config("command", message_dictionary["command"])
         result["result"] = message_dictionary["command"]
         socketio.emit("SERVER-ROS", result)
-        # socketio.emit("SERVER-CONTROI-PANEL", result)
         return
 
     socketio.emit("KBUBOT", result)
@@ -151,38 +161,65 @@ def f_control_panel_mode(message):
 #     if str(message_dictionary["mode"]) == "BATTERY":
 #         result["result"] = message_dictionary["result"]
 
-#     socketio.emit("SERVER-CONTROI-PANEL", result)
+#     socketio.emit("SERVER-CONTROL-PANEL", result)
 
-# @socketio.on("SERVER-CONTROI-PANEL")
-# def f_server_controi_panel_mode(message):
-#     message_json = json.dumps(message, ensure_ascii=False)
-#     message_dictionary = json.loads(message_json)
-#     print(f"กำลังทำงาน... {message_dictionary['mode']}\n")
-#     result = {
-#         "mode": message_dictionary["mode"],
-#         "result": None
-#     }
+@socketio.on("SERVER-CONTROL-PANEL")
+def f_server_controi_panel_mode(message):
+    message_json = json.dumps(message, ensure_ascii=False)
+    message_dictionary = json.loads(message_json)
+    print(f"กำลังทำงาน... {message_dictionary['mode']}\n")
+    result = {
+        "mode": message_dictionary["mode"],
+        "result": None
+    }
 
-#     if str(message_dictionary["mode"]) == "ROUTE":
-#         result["result"] = requestDataFormDataQuestionAnswer()
+    if str(message_dictionary["mode"]) == "READ-DATA":
+        result["result"] = f_read_config()
+
+    elif str(message_dictionary["mode"]) == "CONTROL":
+        f_update_config("control", message_dictionary["control"])
+        result["result"] = message_dictionary["control"]
+        socketio.emit("SERVER-ROS", result)
+        result = None
+        result = {
+            "mode": message_dictionary["mode"],
+            "result": None
+        }
+        result["result"] = f_read_config()
+
+    elif str(message_dictionary["mode"]) == "ROUTE":
+        result["result"] = f_route(message_dictionary["id_route"])
+        socketio.emit("SERVER-ROS", result)
+        result = None
+        result = {
+            "mode": message_dictionary["mode"],
+            "result": None
+        }
+        result["result"] = f_read_config()
+
+    elif str(message_dictionary["mode"]) == "MICROPHONE":
+        f_update_config("microphone", message_dictionary["microphone"])
+        result["result"] = f_read_config()
+
+    # if str(message_dictionary["mode"]) == "ROUTE":
+    #     result["result"] = requestDataFormDataQuestionAnswer()
     
-#     elif str(message_dictionary["mode"]) == "STATUS":
-#         deleteDataFromQuestionAnswer(message_dictionary)
-#         result["result"] = requestDataFormDataQuestionAnswer()
+    # elif str(message_dictionary["mode"]) == "STATUS":
+    #     deleteDataFromQuestionAnswer(message_dictionary)
+    #     result["result"] = requestDataFormDataQuestionAnswer()
 
-#     elif str(message_dictionary["mode"]) == "CONTROL":
-#         deleteDataFromQuestionAnswer(message_dictionary)
-#         result["result"] = requestDataFormDataQuestionAnswer()
+    # elif str(message_dictionary["mode"]) == "CONTROL":
+    #     deleteDataFromQuestionAnswer(message_dictionary)
+    #     result["result"] = requestDataFormDataQuestionAnswer()
 
-#     elif str(message_dictionary["mode"]) == "COMMAND":
-#         deleteDataFromQuestionAnswer(message_dictionary)
-#         result["result"] = requestDataFormDataQuestionAnswer()
+    # elif str(message_dictionary["mode"]) == "COMMAND":
+    #     deleteDataFromQuestionAnswer(message_dictionary)
+    #     result["result"] = requestDataFormDataQuestionAnswer()
 
-#     elif str(message_dictionary["mode"]) == "BATTERY":
-#         deleteDataFromQuestionAnswer(message_dictionary)
-#         result["result"] = requestDataFormDataQuestionAnswer()
+    socketio.emit("SERVER-CONTROL-PANEL", result)
 
 if __name__ == "__main__":
-    # threading.Timer(0, startROS).start()
-    # threading.Timer(1.25, open_browser).start()
+    f_default()
+    threading.Timer(0, startROS).start()
+    threading.Timer(1, open_browser).start()
     socketio.run(app, debug=False, host="0.0.0.0")

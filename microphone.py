@@ -2,7 +2,7 @@ import sounddevice as sd
 import numpy as np
 
 def check_microphone():
-    duration = 5
+    duration = 1
     try:
         # print("เริ่มการบันทึก...")
         recording = sd.rec(int(duration * 44100), samplerate=44100, channels=2, dtype='float64')

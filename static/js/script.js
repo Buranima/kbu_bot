@@ -34,9 +34,17 @@ var play_chat_bot_audio = new Audio("static/base/sound/march_KBU.mp3");
 var play_command_audio = new Audio("static/base/sound/march_KBU.mp3");
 
 function resetWakeWord() {
-    changeText('พูดว่า "สวัสดีน้องเกษม"');
+    changeText("พูดว่า สวัสดี" + config_bot_json["wakeword"][0]);
     wake_word.onend = function () {
-        f_status_bot("start");
+        checkMicrophone().then(function (isAvailable) {
+            if (isAvailable) {
+                var text_command_json_data = { mode: "MICROPHONE", microphone: true };
+                kbu_bot_socket.emit("SERVER-CONTROL-PANEL", text_command_json_data);
+            } else {
+                var text_command_json_data = { mode: "MICROPHONE", microphone: false };
+                kbu_bot_socket.emit("SERVER-CONTROL-PANEL", text_command_json_data);
+            }
+        });
         wake_word.start();
     }
     wake_word.onresult = function (wake_word_event) {
@@ -51,6 +59,7 @@ function resetWakeWord() {
             console.log(wake_word_script_edit);
 
             if (wake_word_script_edit.includes("สวัสดี" + config_bot_json["wakeword"][0])) {
+                setLatestChatBot();
                 f_status_bot("stop");
                 continue_animation = 0;
                 autoAnimationEye();
@@ -62,6 +71,7 @@ function resetWakeWord() {
                 break;
             }
             else if (wake_word_script_edit.includes(config_bot_json["wakeword"][0])) {
+                setLatestChatBot();
                 f_status_bot("stop");
                 continue_animation = 0;
                 autoAnimationEye();
@@ -91,7 +101,7 @@ function resetWakeStop() {
             wake_stop_script_edit = wake_stop_script_edit.replace(" ", "");
             console.log(wake_stop_script_edit);
 
-            if (wake_stop_script_edit.includes(config_bot_json["wakeword"][0] + "หยุด")) {
+            if (wake_stop_script_edit.includes("หยุดพูด")) {
                 continue_animation = 0;
                 autoAnimationEye();
                 playAudioBackground("no");
@@ -134,31 +144,31 @@ function resetListenWord() {
         listen_word.onend = null;
         listen_word.onresult = null;
         listen_word.stop();
-        if (listen_word_script_edit == "เปิดเสียงพื้นหลัง") {
+        if (listen_word_script_edit.includes("เปิดเสียงพื้นหลัง")) {
             continue_play = 1;
             ttsListenWord("หนูเปิดเสียงพื้นหลังให้แล้วค่ะ");
         }
-        else if (listen_word_script_edit == "ปิดเสียงพื้นหลัง") {
+        else if (listen_word_script_edit.includes("ปิดเสียงพื้นหลัง")) {
             continue_play = 0;
             ttsListenWord("หนูปิดเสียงพื้นหลังให้แล้วค่ะ");
         }
-        else if (listen_word_script_edit == "เปิดเพลงประกอบ") {
+        else if (listen_word_script_edit.includes("เปิดเพลงประกอบ")) {
             continue_play = 1;
             ttsListenWord("หนูเปิดเพลงประกอบให้แล้วค่ะ");
         }
-        else if (listen_word_script_edit == "ปิดเพลงประกอบ") {
+        else if (listen_word_script_edit.includes("ปิดเพลงประกอบ")) {
             continue_play = 0;
             ttsListenWord("หนูปิดเพลงประกอบให้แล้วค่ะ");
         }
-        else if (listen_word_script_edit == "คุยกับ" + config_bot_json["wakeword"][0]) {
+        else if (listen_word_script_edit.includes("คุยกับ" + config_bot_json["wakeword"][0])) {
             changeImage("process");
             changeText('ยินดีต้นรับสู่แชท' + config_bot_json["wakeword"][0]);
             chatBot();
         }
-        else if (listen_word_script_edit == "โหลดโปรแกรมใหม่") {
+        else if (listen_word_script_edit.includes("โหลดโปรแกรมใหม่")) {
             location.reload();
         }
-        else if (listen_word_script_edit == "โหลดแชทใหม่") {
+        else if (listen_word_script_edit.includes("โหลดแชทใหม่")) {
             setLatestChatBot();
             chatBot();
         }
@@ -168,15 +178,18 @@ function resetListenWord() {
         else if (listen_word_script_edit == "ไม่") {
             ttsListenWord("แล้วเจอกันใหม่นะคะ");
         }
-        else if (listen_word_script_edit == "เปิดคอนโซล") {
+        else if (listen_word_script_edit == "ไม่ต้องการ") {
+            ttsListenWord("แล้วเจอกันใหม่นะคะ");
+        }
+        else if (listen_word_script_edit.includes("เปิดคอนโซล")) {
             f12();
             ttsListenWord("หนูเปิดคอนโซลให้แล้วค่ะ");
         }
-        else if (listen_word_script_edit == "ปิดคอนโซล") {
+        else if (listen_word_script_edit.includes("ปิดคอนโซล")) {
             f12();
             ttsListenWord("หนูปิดคอนโซลให้แล้วค่ะ");
         }
-        else if (listen_word_script_edit == "ปิดคอนโซล") {
+        else if (listen_word_script_edit.includes("เต้นให้ดู")) {
             f_cmmand("dance");
             changeImage("speak");
             changeText("กำลังแสดง...");
@@ -223,7 +236,7 @@ function resetChat() {
             setLatestChatBot();
             ttsListenWord("แล้วกลับมาคุยกับหนูใหม่นะคะ");
         }
-        else if (chat_word_script_edit == "โหลดโปรแกรมใหม่") {
+        else if (chat_word_script_edit.includes("โหลดโปรแกรมใหม่")) {
             continue_play = 0;
             location.reload();
         }
@@ -244,6 +257,9 @@ function loadConfigJson() {
         })
         .then(data => {
             config_bot_json = data;
+            wake_word.start();
+            resetWakeWord();
+            // console.log(config_bot_json["wakeword"][0])
         })
         .catch(error => {
             console.error("Error:", error);
@@ -458,6 +474,19 @@ function changeText(change_text) {
     document.getElementById("dynamicText").innerHTML = change_text;
 }
 
+function checkMicrophone() {
+    return navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(function (stream) {
+            // console.log('ไมโครโฟนพร้อมใช้งาน');
+            stream.getTracks().forEach(track => track.stop());
+            return true;
+        })
+        .catch(function (err) {
+            // console.error('ไมโครโฟนไม่พร้อมใช้งานหรือถูกปฏิเสธ:', err);
+            return false;
+        });
+}
+
 kbu_bot_socket.on("KBUBOT", (message) => {
     if (message["mode"] == "TTS-WAKE-WORD") {
         playAudioBackground("no");
@@ -487,41 +516,7 @@ kbu_bot_socket.on("KBUBOT", (message) => {
     }
 });
 
-// kbu_bot_socket.on("play-tts-wake-word", (play_tts_wake_word_json_data) => {
-//     playAudioBackground("no");
-//     playTTSWakeWord(play_tts_wake_word_json_data["directory"]);
-// });
-
-// kbu_bot_socket.on("play-tts-listen-word", (play_tts_listen_word_json_data) => {
-//     playAudioBackground("no");
-//     playTTSListenWord(play_tts_listen_word_json_data["directory"]);
-// });
-
-// kbu_bot_socket.on("tts-question", (play_tts_question_json_data) => {
-//     playAudioBackground("no");
-//     playTTSQuestion(play_tts_question_json_data["directory"]);
-// });
-
-// kbu_bot_socket.on("load-list-sound", (load_list_sound_json_data) => {
-//     list_sound_background = load_list_sound_json_data;
-//     continue_play = config_bot_json["playsound"]
-//     if (continue_play == 1) {
-//         playAudioBackground("yes");
-//     }
-//     else {
-//         playAudioBackground("no");
-//     }
-// });
-
-// kbu_bot_socket.on("tts-chat-bot", (play_tts_chat_bot_json_data) => {
-//     playAudioBackground("no");
-//     playTTSChatBot(play_tts_chat_bot_json_data["directory"]);
-// });
-
 loadConfigJson()
-
-wake_word.start();
-resetWakeWord();
 
 loadListSound();
 

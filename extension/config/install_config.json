@@ -7,6 +7,7 @@
         "python-crfsuite",
         "python-socketio",
         "Flask-SocketIO",
-        "pyautogui"
+        "pyautogui",
+        "sounddevice"
     ]
 }

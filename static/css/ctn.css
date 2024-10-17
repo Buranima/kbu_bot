@@ -1,3 +1,27 @@
+.body {
+    font-family: 'Noto Sans Thai', sans-serif;
+}
+
+.control-panel-title {
+    font-size: 8vh;
+    font-weight: bold;
+}
+
+.control-panel-image {
+    width: 18vh;
+    height: auto;
+    float: left;
+    /* margin: auto; */
+}
+
+.title_name_img {
+    width: 50vh
+}
+
+.title_name_h1 {
+    width: 100%;
+}
+
 .all {
     display: flex;
     flex: 1;
@@ -29,8 +53,8 @@
     height: 80vh;
     justify-content: center;
     align-items: center;
-    background-color: #f4f4f4;
-    border: 1vh solid #ccc;
+    /* background-color: #f4f4f4;
+    border: 1vh solid #ccc; */
 }
 
 .middle_control {
@@ -42,8 +66,8 @@
     height: 80vh;
     justify-content: center;
     align-items: center;
-    background-color: #f4f4f4;
-    border: 1vh solid #ccc;
+    /* background-color: #f4f4f4;
+    border: 1vh solid #ccc; */
 }
 
 .right_control {
@@ -55,8 +79,8 @@
     height: 80vh;
     justify-content: center;
     align-items: center;
-    background-color: #f4f4f4;
-    border: 1vh solid #ccc;
+    /* background-color: #f4f4f4;
+    border: 1vh solid #ccc; */
 }
 
 .top_middle_control {
@@ -67,8 +91,8 @@
     width: 100%;
     justify-content: center;
     align-items: center;
-    background-color: #f4f4f4;
-    border: 1vh solid #ccc;
+    /* background-color: #f4f4f4;
+    border: 1vh solid #ccc; */
 }
 
 .middle_middle_control {
@@ -79,8 +103,8 @@
     width: 100%;
     justify-content: center;
     align-items: center;
-    background-color: #f4f4f4;
-    border: 1vh solid #ccc;
+    /* background-color: #f4f4f4;
+    border: 1vh solid #ccc; */
 }
 
 .below_middle_control {
@@ -91,8 +115,18 @@
     width: 100%;
     justify-content: center;
     align-items: center;
-    background-color: #f4f4f4;
-    border: 1vh solid #ccc;
+    /* background-color: #f4f4f4;
+    border: 1vh solid #ccc; */
+}
+
+.title_name {
+    width: 100%;
+    height: 20vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background-color: #f4f4f4;
+    border: 1vh solid #ccc; */
 }
 
 .right_page {
@@ -104,8 +138,8 @@
     height: 100vh;
     justify-content: center;
     align-items: center;
-    background-color: #f4f4f4;
-    border: 1vh solid #ccc;
+    /* background-color: #f4f4f4;
+    border: 1vh solid #ccc; */
 }
 
 .status_bar {
@@ -116,28 +150,20 @@
     height: 21vh;
     justify-content: center;
     align-items: center;
-    background-color: #f4f4f4;
-    border: 1vh solid #ccc;
+    /* background-color: #f4f4f4;
+    border: 1vh solid #ccc; */
 }
 
-.title_name {
+.display {
     width: 100%;
-    height: 20vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f4f4f4;
-    border: 1vh solid #ccc;
+    height: 60vh;
 }
 
 .status_route {
-    width: 100%;
+    width: 88%;
     height: 79vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f4f4f4;
-    border: 1vh solid #ccc;
+    /* background-color: #f4f4f4;
+    border: 1vh solid #ccc; */
 }
 
 .status_microphone {
@@ -145,8 +171,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f4f4f4;
-    border: 1vh solid #ccc;
+    /* background-color: #f4f4f4;
+    border: 1vh solid #ccc; */
 }
 
 .status_battery {
@@ -154,8 +180,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f4f4f4;
-    border: 1vh solid #ccc;
+    /* background-color: #f4f4f4;
+    border: 1vh solid #ccc; */
 }
 
 .button_control {

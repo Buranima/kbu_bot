@@ -170,5 +170,12 @@ if __name__ == "__main__":
     # deleteDataFromQuestionAnswer(a)
     # a = {"id":46}
     # deleteDataFromQuestionAnswer(a)
+    # connectDataBase()
+    # sql_update_query = f"""UPDATE data_question_answer SET id = id - 1 WHERE id > 29"""
+    # cursor_database = connect_database.cursor()
+    # cursor_database.execute(sql_update_query)
+    # connect_database.commit()
+    # f_auto_id()
+
     database_view = requestDataFormDataQuestionAnswer()
     print(database_view)
