@@ -12,20 +12,24 @@ list_data_file_path = "static/temp/list_data.json"
 kbubot_config_file_path = "static/config/json/kbubot_config.json"
 
 text_tts = ""
-
+json_kbubot_config = None
 list_data_json_answer = {
     "question":[],
     "answer": [],
     "result":[]
 }
 
-with open(kbubot_config_file_path, "r", encoding="utf-8") as json_kbubot_config_file:
-    json_kbubot_config = json.load(json_kbubot_config_file)
+def f_load_config():
+    global json_kbubot_config, kbubot_config_file_path
+    with open(kbubot_config_file_path, "r", encoding="utf-8") as json_kbubot_config_file:
+        json_kbubot_config = json.load(json_kbubot_config_file)
 
-if os.path.exists(questions_tokenize_file_path):
-    pass
-else:
-    requestDataFormDataQuestionAnswer()
+def f_check_questions_tokenize():
+    global questions_tokenize_file_path
+    if os.path.exists(questions_tokenize_file_path):
+        pass
+    else:
+        requestDataFormDataQuestionAnswer()
 
 def setLatestQuestions(set_latest_questions):
     global latest_questions_file_path
@@ -33,10 +37,12 @@ def setLatestQuestions(set_latest_questions):
     with open(latest_questions_file_path, "w", encoding="utf-8") as json_file:
         json.dump(set_latest_questions_data, json_file, ensure_ascii=False, indent=4)
 
-if os.path.exists(latest_questions_file_path):
-    pass
-else:
-    setLatestQuestions("")
+def f_check_latest_questions():
+    global latest_questions_file_path
+    if os.path.exists(latest_questions_file_path):
+        pass
+    else:
+        setLatestQuestions("")
 
 def findOne(text_questions_find_one):
     global questions_tokenize_file_path, result_questions_file_path, latest_questions_file_path, json_kbubot_config
@@ -237,7 +243,9 @@ def findByKBUBot(text_questions):
 
 def findAnswer(text_questions_find_answer):
     global text_tts, json_kbubot_config
-
+    f_load_config()
+    f_check_questions_tokenize()
+    f_check_latest_questions()
     if json_kbubot_config["search"][1] == "kbubot":
         findByKBUBot(text_questions_find_answer)
     else:

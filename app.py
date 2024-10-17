@@ -3,9 +3,9 @@ from flask_socketio import SocketIO
 import pyautogui
 import json
 import webbrowser
-import threading
 import time
 import subprocess
+import threading
 
 from load_sound import loadSound
 from text_to_speech import textToSpeech
@@ -16,10 +16,6 @@ from search_by_typhoon import chatByTyphoon, setLatestQuestionsByTyphoon
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-@app.route("/test")
-def test():
-    return render_template("test.html")
-
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -27,87 +23,6 @@ def index():
 @app.route("/db")
 def managementDB():
     return render_template("management_db.html")
-
-@socketio.on("data-form-database")
-def dataFormDataBase(data_form_database_text):
-    print(f"ข้อมูลที่ได้รับจาก data-form-database คือ {data_form_database_text}")
-    data_form_database_string_data = json.dumps(data_form_database_text, ensure_ascii=False)
-    data_form_database_dictionary_data = json.loads(data_form_database_string_data)
-    print(f'โหมดที่ต้องดำเนินการคือ {data_form_database_dictionary_data["mode"]} mode\n')
-    if str(data_form_database_dictionary_data["mode"]) == "read":
-        # print(requestDataFormDataQuestionAnswer())
-        socketio.emit("data-form-database", requestDataFormDataQuestionAnswer())
-        print("ส่งข้อมูลไปยังไคลเอนต์สำเร็จ")
-    elif str(data_form_database_dictionary_data["mode"]) == "update":
-        updateDataFormDataQuestionAnswer(data_form_database_dictionary_data)
-        # print(requestDataFormDataQuestionAnswer())
-        socketio.emit("data-form-database", requestDataFormDataQuestionAnswer())
-        print("ส่งข้อมูลไปยังไคลเอนต์สำเร็จ")
-    elif str(data_form_database_dictionary_data["mode"]) == "insert":
-        # เพิ่มข้อมูลใหม่ลงในฐานข้อมูล
-        insertDataToQuestionAnswer(data_form_database_dictionary_data)
-        socketio.emit("data-form-database", requestDataFormDataQuestionAnswer())
-        print("ส่งข้อมูลไปยังไคลเอนต์สำเร็จ")
-    elif str(data_form_database_dictionary_data["mode"]) == "delete":
-        deleteDataFromQuestionAnswer(data_form_database_dictionary_data["id"])
-        socketio.emit("data-form-database", requestDataFormDataQuestionAnswer())
-        print("ลบข้อมูลและจัดเรียง ID ใหม่สำเร็จ")
-
-@socketio.on("tts-wake-word")
-def ttsWakeWord(tts_wake_word_text):
-    print(f"ข้อมูลที่ได้รับจาก tts-wake-word คือ {tts_wake_word_text}")
-    tts_wake_word_json_string_data = json.dumps(tts_wake_word_text, ensure_ascii=False)
-    tts_wake_word_json_dictionary_data = json.loads(tts_wake_word_json_string_data)
-    print(tts_wake_word_json_dictionary_data["speech"])
-    socketio.emit("play-tts-wake-word", textToSpeech(tts_wake_word_json_dictionary_data["speech"]))
-
-@socketio.on("tts-listen-word")
-def ttsListenWord(tts_listen_word_text):
-    print(f"ข้อมูลที่ได้รับจาก tts-listen-word คือ {tts_listen_word_text}")
-    tts_listen_word_json_string_data = json.dumps(tts_listen_word_text, ensure_ascii=False)
-    tts_listen_word_json_dictionary_data = json.loads(tts_listen_word_json_string_data)
-    print(tts_listen_word_json_dictionary_data["speech"])
-    socketio.emit("play-tts-listen-word", textToSpeech(tts_listen_word_json_dictionary_data["speech"]))
-
-@socketio.on("tts-question")
-def ttsQuestion(tts_question):
-    print(f"ข้อมูลที่ได้รับจาก tts-question คือ {tts_question}")
-    tts_question_json_string_data = json.dumps(tts_question, ensure_ascii=False)
-    tts_question_json_dictionary_data = json.loads(tts_question_json_string_data)
-    print(tts_question_json_dictionary_data["speech"])
-    tts_question_txt = findAnswer(tts_question_json_dictionary_data["speech"])
-    if str(tts_question_txt) == "หนูไม่เข้าใจคำถามนี้":
-        socketio.emit("tts-question", textToSpeech(tts_question_txt + "ค่ะ"))
-    elif str(tts_question_txt) == "หนูยังไม่มั่นใจในคำตอบของคำถามนี้":
-        socketio.emit("tts-question", textToSpeech(tts_question_txt + "ค่ะ กรุณาระบุรายละเอียดของคำถามให้ชัดเจนมากขึ้น เพื่อให้หนูสามารถตอบคำถามนี้ได้ค่ะ"))
-    else:
-        socketio.emit("tts-question", textToSpeech(tts_question_txt + "ค่ะ ต้องการสอบถามเพิ่มเติมมั้ยคะ"))
-
-@socketio.on("tts-chat-bot")
-def ttsChatBot(tts_chat_bot):
-    print(f"ข้อมูลที่ได้รับจาก tts-chat-bot คือ {tts_chat_bot}")
-    tts_chat_bot_json_string_data = json.dumps(tts_chat_bot, ensure_ascii=False)
-    tts_chat_bot_json_dictionary_data = json.loads(tts_chat_bot_json_string_data)
-    if str(tts_chat_bot_json_dictionary_data["mode"]) == "TTS":
-        print(tts_chat_bot_json_dictionary_data["speech"])
-        tts_chat_bot_txt = chatByTyphoon(tts_chat_bot_json_dictionary_data["speech"])
-        socketio.emit("tts-chat-bot", textToSpeech(tts_chat_bot_txt + "ค่ะ"))
-    else:
-        setLatestQuestionsByTyphoon()
-
-@socketio.on("load-list-sound")
-def loadListSound(text_sound):
-    print(f"ข้อมูลที่ได้รับจาก load-list-sound คือ {text_sound}")
-    text_sound_string_data = json.dumps(text_sound, ensure_ascii=False)
-    text_sound_dictionary_data = json.loads(text_sound_string_data)
-    print(f'โหมดที่ต้องดำเนินการคือ {text_sound_dictionary_data["mode"]} mode\n')
-    if str(text_sound_dictionary_data["mode"]) == "read":
-        socketio.emit("load-list-sound", loadSound())
-
-@socketio.on("F12")
-def f12(text_f12):
-    print(f"ข้อมูลที่ได้รับจาก F12 คือ {text_f12}")
-    pyautogui.press("f12")
 
 def open_browser():
     webbrowser.open("http://127.0.0.1:5000")
@@ -118,8 +33,149 @@ def startROS():
     commandROS = "ros2 launch test_pkg laser.launch.py"
     processROS = subprocess.Popen(commandROS, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = processROS.communicate()
-    print("Output:\n", stdout.decode())
-    print("Error:\n", stderr.decode())
+    # print("Output:\n", stdout.decode())
+    # print("Error:\n", stderr.decode())
+
+@socketio.on("KBUBOT")
+def f_KBU_mode(message):
+    message_json = json.dumps(message, ensure_ascii=False)
+    message_dictionary = json.loads(message_json)
+    print(f"กำลังทำงาน... {message_dictionary['mode']}\n")
+    result = {
+        "mode": message_dictionary["mode"],
+        "result": None
+    }
+    
+    if str(message_dictionary["mode"]) == "TTS-WAKE-WORD":
+        result["result"] = textToSpeech(message_dictionary["speech"])
+    
+    elif str(message_dictionary["mode"]) == "TTS-LISTEN-WORD":
+        result["result"] = textToSpeech(message_dictionary["speech"])
+    
+    elif str(message_dictionary["mode"]) == "TTS-QUESTION":
+        result_answer = findAnswer(message_dictionary["speech"])
+        if str(result_answer) == "หนูไม่เข้าใจคำถามนี้":
+            result["result"] = textToSpeech(result_answer + "ค่ะ")
+        elif str(result_answer) == "หนูยังไม่มั่นใจในคำตอบของคำถามนี้":
+            result["result"] = textToSpeech(result_answer + "ค่ะ กรุณาระบุรายละเอียดของคำถามให้ชัดเจนมากขึ้น เพื่อให้หนูสามารถตอบคำถามนี้ได้ค่ะ")
+        else:
+            result["result"] = textToSpeech(result_answer + "ค่ะ มีอะไรถามเพิ่มเติมอีกมั้ยคะ")
+    
+    elif str(message_dictionary["mode"]) == "LOAD-LIST-SOUND":
+        result["result"] = loadSound()
+    
+    elif str(message_dictionary["mode"]) == "TTS-CHAT-BOT":
+        result_answer = chatByTyphoon(message_dictionary["speech"])
+        result["result"] = textToSpeech(result_answer + "ค่ะ")
+    
+    elif str(message_dictionary["mode"]) == "CLEAR-CHAT":
+        setLatestQuestionsByTyphoon()
+        result["result"] = "OK"
+    
+    elif str(message_dictionary["mode"]) == "CONSOLE-LOG":
+        pyautogui.press("f12")
+        result["result"] = "OK"
+    
+    elif str(message_dictionary["mode"]) == "DATABASE-READ":
+        result["result"] = requestDataFormDataQuestionAnswer()
+    
+    elif str(message_dictionary["mode"]) == "DATABASE-UP-DATE":
+        updateDataFormDataQuestionAnswer(message_dictionary)
+        result["result"] = requestDataFormDataQuestionAnswer()
+    
+    elif str(message_dictionary["mode"]) == "DATABASE-INSERT":
+        insertDataToQuestionAnswer(message_dictionary)
+        result["result"] = requestDataFormDataQuestionAnswer()
+    
+    elif str(message_dictionary["mode"]) == "DATABASE-DELETE":
+        deleteDataFromQuestionAnswer(message_dictionary)
+        result["result"] = requestDataFormDataQuestionAnswer()
+
+    elif str(message_dictionary["mode"]) == "STATUS":
+        result["result"] = message_dictionary["status"]
+        socketio.emit("SERVER-ROS", result)
+        # socketio.emit("SERVER-CONTROI-PANEL", result)
+        return
+    
+    elif str(message_dictionary["mode"]) == "COMMAND":
+        result["result"] = message_dictionary["command"]
+        socketio.emit("SERVER-ROS", result)
+        # socketio.emit("SERVER-CONTROI-PANEL", result)
+        return
+
+    socketio.emit("KBUBOT", result)
+
+@socketio.on("DATA-BASE")
+def f_control_panel_mode(message):
+    message_json = json.dumps(message, ensure_ascii=False)
+    message_dictionary = json.loads(message_json)
+    print(f"กำลังทำงาน... {message_dictionary['mode']}\n")
+    result = {
+        "mode": message_dictionary["mode"],
+        "result": None
+    }
+
+    if str(message_dictionary["mode"]) == "DATABASE-READ":
+        result["result"] = requestDataFormDataQuestionAnswer()
+    
+    elif str(message_dictionary["mode"]) == "DATABASE-UP-DATE":
+        updateDataFormDataQuestionAnswer(message_dictionary)
+        result["result"] = requestDataFormDataQuestionAnswer()
+    
+    elif str(message_dictionary["mode"]) == "DATABASE-INSERT":
+        insertDataToQuestionAnswer(message_dictionary)
+        result["result"] = requestDataFormDataQuestionAnswer()
+    
+    elif str(message_dictionary["mode"]) == "DATABASE-DELETE":
+        deleteDataFromQuestionAnswer(message_dictionary)
+        result["result"] = requestDataFormDataQuestionAnswer()
+
+    socketio.emit("CONTROI-PANEL", result)
+
+# @socketio.on("SERVER-ROS")
+# def f_server_ros_mode(message):
+#     # message_json = json.dumps(message, ensure_ascii=False)
+#     # message_dictionary = json.loads(message_json)
+#     message_dictionary = message
+#     print(f"กำลังทำงาน... {message_dictionary['mode']}\n")
+#     result = {
+#         "mode": message_dictionary["mode"],
+#         "result": None
+#     }
+
+#     if str(message_dictionary["mode"]) == "BATTERY":
+#         result["result"] = message_dictionary["result"]
+
+#     socketio.emit("SERVER-CONTROI-PANEL", result)
+
+# @socketio.on("SERVER-CONTROI-PANEL")
+# def f_server_controi_panel_mode(message):
+#     message_json = json.dumps(message, ensure_ascii=False)
+#     message_dictionary = json.loads(message_json)
+#     print(f"กำลังทำงาน... {message_dictionary['mode']}\n")
+#     result = {
+#         "mode": message_dictionary["mode"],
+#         "result": None
+#     }
+
+#     if str(message_dictionary["mode"]) == "ROUTE":
+#         result["result"] = requestDataFormDataQuestionAnswer()
+    
+#     elif str(message_dictionary["mode"]) == "STATUS":
+#         deleteDataFromQuestionAnswer(message_dictionary)
+#         result["result"] = requestDataFormDataQuestionAnswer()
+
+#     elif str(message_dictionary["mode"]) == "CONTROL":
+#         deleteDataFromQuestionAnswer(message_dictionary)
+#         result["result"] = requestDataFormDataQuestionAnswer()
+
+#     elif str(message_dictionary["mode"]) == "COMMAND":
+#         deleteDataFromQuestionAnswer(message_dictionary)
+#         result["result"] = requestDataFormDataQuestionAnswer()
+
+#     elif str(message_dictionary["mode"]) == "BATTERY":
+#         deleteDataFromQuestionAnswer(message_dictionary)
+#         result["result"] = requestDataFormDataQuestionAnswer()
 
 if __name__ == "__main__":
     threading.Timer(0, startROS).start()

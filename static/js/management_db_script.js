@@ -1,8 +1,8 @@
 var kbu_bot_socket = io();
 
 // Listen for the data from the server
-kbu_bot_socket.on("data-form-database", (on_data_form_database_json) => {
-    const data = JSON.parse(on_data_form_database_json);
+kbu_bot_socket.on("DATA-BASE", (on_data_form_database_json) => {
+    const data = JSON.parse(on_data_form_database_json["result"]);
     console.log(data); // Debugging output
 
     // ล้างข้อมูลใน DataTable เดิม
@@ -28,13 +28,13 @@ kbu_bot_socket.on("data-form-database", (on_data_form_database_json) => {
 });
 
 // ส่งคำขอข้อมูลจากฐานข้อมูล โดยกำหนด mode เป็น "read" เพื่อดึงข้อมูล
-var data_form_database_json = { mode: "read" };
-kbu_bot_socket.emit("data-form-database", data_form_database_json);
+var data_form_database_json = { mode: "DATABASE-READ" };
+kbu_bot_socket.emit("DATA-BASE", data_form_database_json);
 
 
 // จัดการคลิกปุ่มแก้ไขข้อมูล
 $(document).on('click', '.editBtn', function() {
-    var id = $(this).attr('id'); 
+    var id = Number($(this).attr('id'));
     var row = $(this).closest('tr');
     var question = row.find('td:eq(0)').text(); 
     var answer = row.find('td:eq(1)').text(); 
@@ -56,17 +56,17 @@ $('#saveChanges').on('click', function() {
 
 // จัดการเมื่อคลิกปุ่มยืนยันการบันทึก
 $('#confirmSave').on('click', function() {
-    var id = $('#recordId').val();
+    var id = Number($('#recordId').val());
     var updatedQuestion = $('#questionInput').val();
     var updatedAnswer = $('#answerInput').val();
 
     var data_form_database_json = {
-        mode: "update",
+        mode: "DATABASE-UP-DATE",
         id: id,
         question: updatedQuestion,
         answer: updatedAnswer
     };
-    kbu_bot_socket.emit("data-form-database", data_form_database_json);
+    kbu_bot_socket.emit("DATA-BASE", data_form_database_json);
 
     $('#confirmSaveModal').modal('hide');
     $('#editModal').modal('hide');
@@ -96,13 +96,13 @@ $('#confirmSaveAdd').on('click', function() {
     var newAnswer = $('#answerInputNew').val();
 
     var data_form_database_json = {
-        mode: "insert",
+        mode: "DATABASE-INSERT",
         question: newQuestion,
         answer: newAnswer
     };
     
     // ส่งข้อมูลใหม่ไปยังเซิร์ฟเวอร์เพื่อทำการเพิ่ม
-    kbu_bot_socket.emit("data-form-database", data_form_database_json);
+    kbu_bot_socket.emit("DATA-BASE", data_form_database_json);
 
     // ปิดโมเดลหลังจากเพิ่มข้อมูลใหม่
     $('#confirmSaveModalAdd').modal('hide');
@@ -111,7 +111,7 @@ $('#confirmSaveAdd').on('click', function() {
 
 // จัดการคลิกปุ่มลบข้อมูล
 $(document).on('click', '.deleteBtn', function() {
-    var id = $(this).attr('id');
+    var id = Number($(this).attr('id'));
 
     // แสดงโมเดลยืนยันการลบข้อมูล
     $('#confirmDeleteModal').modal('show');
@@ -119,12 +119,12 @@ $(document).on('click', '.deleteBtn', function() {
     // เมื่อยืนยันการลบ
     $('#confirmDelete').on('click', function() {
         var data_form_database_json = {
-            mode: "delete",
+            mode: "DATABASE-DELETE",
             id: id
         };
         
         // ส่งคำขอไปยังเซิร์ฟเวอร์เพื่อลบข้อมูล
-        kbu_bot_socket.emit("data-form-database", data_form_database_json);
+        kbu_bot_socket.emit("DATA-BASE", data_form_database_json);
 
         // ปิดโมเดลยืนยันการลบ
         $('#confirmDeleteModal').modal('hide');

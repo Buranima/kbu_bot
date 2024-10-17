@@ -2,7 +2,7 @@
     "wakeword": ["น้องเกษม","Nong Kesem."],
     "search":["kbubot","typhoon"],
     "apikey":"sk-KQHSZ0K0YoSXt7xnd2m2J6OqYW2lLDAGz4GY0l2YZsnWypaR",
-    "playsound":0,
+    "playsound":1,
     "engine":["newmm","deepcut"],
     "passscore": 86.0,
     "lenpass":4.0,

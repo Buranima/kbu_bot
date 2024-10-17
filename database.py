@@ -4,16 +4,30 @@ import json
 
 connect_database = None
 cursor_database = None
+config_database = None
+config_kbubot = None
 
 questions_tokenize_file_path = "static/temp/questions_tokenize.json"
 config_database_file_path = "static/config/json/database_config.json"
 config_kbubot_file_path = "static/config/json/kbubot_config.json"
 
-with open(config_database_file_path, "r", encoding="utf-8") as file_config_database:
-    config_database = json.load(file_config_database)
+def f_load_config():
+    global config_database, config_kbubot
+    with open(config_database_file_path, "r", encoding="utf-8") as file_config_database:
+        config_database = json.load(file_config_database)
+    with open(config_kbubot_file_path, "r", encoding="utf-8") as file_config_kbubot:
+        config_kbubot = json.load(file_config_kbubot)
 
-with open(config_kbubot_file_path, "r", encoding="utf-8") as file_config_kbubot:
-    config_kbubot = json.load(file_config_kbubot)
+def f_auto_id():
+    global connect_database, cursor_database
+    connectDataBase()
+    cursor_database.execute("SELECT MAX(id) FROM data_question_answer")
+    max_id = cursor_database.fetchone()[0]
+    if max_id is not None:
+        cursor_database.execute(f"ALTER TABLE data_question_answer AUTO_INCREMENT = {max_id + 1};")
+    connect_database.commit()
+    cursor_database.close()
+    connect_database.close()
 
 def loadQuestionsTokenize(json_database):
     global config_kbubot
@@ -35,6 +49,7 @@ def loadQuestionsTokenize(json_database):
 
 def connectDataBase():
     global connect_database, cursor_database, config_database
+    f_load_config()
     try:
         connect_database = mysql.connector.connect(
             host=config_database["host"][0],
@@ -45,9 +60,10 @@ def connectDataBase():
             collation=config_database["collation"][0]
         )
         cursor_database = connect_database.cursor()
-        print("เชื่อมต่อกับฐานข้อมูลได้สำเร็จ\n")
+        # print("เชื่อมต่อกับฐานข้อมูลได้สำเร็จ\n")
     except mysql.connector.Error as err:
-        print(f"เกิดข้อผิดพลาด: {err}")
+        # print(f"เกิดข้อผิดพลาด: {err}")
+        return
 
 def requestDataFormDataQuestionAnswer():
     global connect_database, cursor_database
@@ -79,9 +95,10 @@ def updateDataFormDataQuestionAnswer(update_data_form_data_question_answer_data)
     try:
         cursor_database.execute(sql_update_query, values_update_query)
         connect_database.commit()
-        print(f"ข้อมูลที่มี id {int(update_data_form_data_question_answer_json_dictionary_data['id'])} ถูกอัปเดตเรียบร้อยแล้ว")
+        # print(f"ข้อมูลที่มี id {int(update_data_form_data_question_answer_json_dictionary_data['id'])} ถูกอัปเดตเรียบร้อยแล้ว")
     except mysql.connector.Error as err:
-        print(f"เกิดข้อผิดพลาด: {err}")
+        # print(f"เกิดข้อผิดพลาด: {err}")
+        return
     finally:
         cursor_database.close()
         connect_database.close()
@@ -98,49 +115,45 @@ def insertDataToQuestionAnswer(insert_data_question_answer_data):
     try:
         cursor_database.execute(sql_insert_query, values_insert_query)
         connect_database.commit()
-        print(f"ข้อมูลใหม่ถูกเพิ่มเรียบร้อยแล้ว: {insert_data_question_answer_json_dictionary_data['question']}")
+        # print(f"ข้อมูลใหม่ถูกเพิ่มเรียบร้อยแล้ว: {insert_data_question_answer_json_dictionary_data['question']}")
     except mysql.connector.Error as err:
-        print(f"เกิดข้อผิดพลาด: {err}")
+        # print(f"เกิดข้อผิดพลาด: {err}")
+        return
     finally:
         cursor_database.close()
         connect_database.close()
 
-def deleteDataFromQuestionAnswer(id_to_delete):
+def deleteDataFromQuestionAnswer(delete_data_question_answer_data):
     global connect_database, cursor_database
     connectDataBase()
-
-    sql_delete_query = "DELETE FROM data_question_answer WHERE id = %s"
+    delete_data_question_answer_json_string_data = json.dumps(delete_data_question_answer_data, ensure_ascii=False)
+    delete_data_question_answer_json_dictionary_data = json.loads(delete_data_question_answer_json_string_data)
+    sql_delete_query = f"DELETE FROM data_question_answer WHERE id = {delete_data_question_answer_json_dictionary_data['id']}"
     try:
-        cursor_database.execute(sql_delete_query, (id_to_delete,))
+        cursor_database.execute(sql_delete_query)
         connect_database.commit()
-        print(f"ข้อมูลที่มี id {id_to_delete} ถูกลบเรียบร้อยแล้ว")
+        # print(f"ข้อมูลที่มี id {id_to_delete} ถูกลบเรียบร้อยแล้ว")
     except mysql.connector.Error as err:
-        print(f"เกิดข้อผิดพลาดในการลบ: {err}")
+        # print(f"เกิดข้อผิดพลาดในการลบ: {err}")
         return
     finally:
         cursor_database.close()
-
-    sql_update_query = """UPDATE data_question_answer SET id = id - 1 WHERE id > %s"""
+        connect_database.close()
+    connectDataBase()
+    sql_update_query = f"""UPDATE data_question_answer SET id = id - 1 WHERE id > {delete_data_question_answer_json_dictionary_data["id"]}"""
     try:
         cursor_database = connect_database.cursor()
-        cursor_database.execute(sql_update_query, (id_to_delete,))
+        cursor_database.execute(sql_update_query)
         connect_database.commit()
     except mysql.connector.Error as err:
-        print(f"เกิดข้อผิดพลาดในการอัปเดต ID: {err}")
+        # print(f"เกิดข้อผิดพลาดในการอัปเดต ID: {err}")
+        return
     finally:
         cursor_database.close()
-
-    cursor_database = connect_database.cursor()
-    cursor_database.execute("SELECT MAX(id) FROM data_question_answer")
-    max_id = cursor_database.fetchone()[0]
-    
-    if max_id is not None:
-        cursor_database.execute(f"ALTER TABLE data_question_answer AUTO_INCREMENT = {max_id + 1};")
-    connect_database.commit()
-    
-    cursor_database.close()
-    connect_database.close()
+        connect_database.close()
+    f_auto_id()
 
 if __name__ == "__main__":
+    # deleteDataFromQuestionAnswer(1)
     database_view = requestDataFormDataQuestionAnswer()
     print(database_view)

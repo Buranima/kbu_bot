@@ -8,12 +8,29 @@ config_kbubot_file_path = "static/config/json/kbubot_config.json"
 latest_questions_by_typhoon_file_path = "static/temp/latest_questions_by_typhoon.json"
 
 latest_questions_by_typhoon = None
-
-with open(config_kbubot_file_path, "r", encoding="utf-8") as file_config_kbubot:
-    config_kbubot = json.load(file_config_kbubot)
-
 data_database = None
+config_kbubot = None
+headers = None
 content_system = ""
+endpoint = "https://api.opentyphoon.ai/v1/chat/completions"
+
+def f_set_headers():
+    global config_kbubot, headers
+    headers = {
+        "Authorization": f"Bearer {config_kbubot['apikey']}"
+    }
+
+def f_check_latest_questions_by_typhoon():
+    global latest_questions_by_typhoon_file_path
+    if os.path.exists(latest_questions_by_typhoon_file_path):
+        pass
+    else:
+        setLatestQuestionsByTyphoon()
+
+def f_load_config():
+    global config_kbubot, config_kbubot_file_path
+    with open(config_kbubot_file_path, "r", encoding="utf-8") as file_config_kbubot:
+        config_kbubot = json.load(file_config_kbubot)
 
 def loadData():
     global data_database, content_system
@@ -23,28 +40,20 @@ def loadData():
         content_system = content_system + f"{id_text}. {data_database['question'][id_text-1]} คำตอบ {data_database['answer'][id_text-1]}\n"
     content_system = content_system + "หากสิ่งที่ถามไม่อยู่ในข้อมูลที่ให้ ให้ตอบว่าหนูไม่ทราบคำตอบของคำถามนี้"
 
-endpoint = "https://api.opentyphoon.ai/v1/chat/completions"
-headers = {
-    "Authorization": f"Bearer {config_kbubot['apikey']}"
-}
-
 def setLatestQuestionsByTyphoon():
     set_latest_questions_by_typhoon = {"latest":[]}
 
     with open(latest_questions_by_typhoon_file_path, "w", encoding="utf-8") as json_file:
         json.dump(set_latest_questions_by_typhoon, json_file, ensure_ascii=False, indent=4)
 
-if os.path.exists(latest_questions_by_typhoon_file_path):
-    pass
-else:
-    setLatestQuestionsByTyphoon()
-
-
 def findAnswerByTyphoon(text_questions_message):
+    f_load_config()
+    f_check_latest_questions_by_typhoon()
+    f_set_headers()
     loadData()
     data_answer = {
         "model": "typhoon-v1.5-instruct",
-        "max_tokens": 512,
+        "max_tokens": 256,
         "messages": [
             {"role": "system", "content": f"คุณชื่อ{config_kbubot['wakeword'][0]} ถูกพัฒนาและสร้างขึ้นโดยคณะวิศวกรรมศาสตร์ คุณมีหน้าที่ตอบคำถามที่เกี่ยวข้องมหาวิทยาลัยเกษมบัณฑิต และคุณจะตอบเป็นภาษาไทยเท่านั้น"},
             {"role": "user", "content": content_system}
@@ -88,6 +97,9 @@ def findAnswerByTyphoon(text_questions_message):
     return answer_result
 
 def chatByTyphoon(text_questions_message_chat):
+    f_load_config()
+    f_check_latest_questions_by_typhoon()
+    f_set_headers()
     data_chat = {
         "model": "typhoon-v1.5x-70b-instruct",
         "max_tokens": 256,

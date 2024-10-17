@@ -13,8 +13,9 @@ def textToSpeech(tts_text):
     text_to_speech.save(text_to_speech_output)
     text_to_speech_output = None
     text_to_speech_output = "static/temp/text_to_speech.mp3?v="
-    text_to_speech_json = {"directory": text_to_speech_output}
-    return text_to_speech_json
+    # text_to_speech_json = {"directory": text_to_speech_output}
+    return text_to_speech_output
+    # return text_to_speech_json
 
 if __name__ == "__main__":
     print(textToSpeech("ทดสอบ ทดสอบ ทดสอบ 1234567890"))
