@@ -12,6 +12,7 @@ from text_to_speech import textToSpeech
 from database import requestDataFormDataQuestionAnswer, updateDataFormDataQuestionAnswer, insertDataToQuestionAnswer, deleteDataFromQuestionAnswer
 from analyze_questions import findAnswer
 from search_by_typhoon import chatByTyphoon, setLatestQuestionsByTyphoon
+from microphone import check_microphone
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -19,6 +20,10 @@ socketio = SocketIO(app)
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@app.route("/test")
+def f_test():
+    return render_template("test.html")
 
 @app.route("/db")
 def managementDB():

@@ -2,13 +2,71 @@
 <html lang="th">
 
 <head>
-    <title>Database Management System</title>
+    <title>Control Panel</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='base/img/favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/test_style.css') }}">
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap" rel="stylesheet">
 </head>
 
 <body>
+    <div class="all">
+        <div class="left_page">
+            <div class="ctl">
+                <div class="title_name">
+                    <h1>แผงควบคุม</h1>
+                </div>
+                <div class="control">
+                    <div class="left_control">
+                        <button class="button_control" role="button">ซ้าย</button>
+                        <button class="button_control" id="control-button">Toggle Light</button>
+                    </div>
+                    <div class="middle_control">
+                        <div class="top_middle_control">
+                            <button class="button_control" role="button">เดินหน้า</button>
+                        </div>
+                        <div class="middle_middle_control">
+                            <button class="button_control" role="button">หยุด</button>
+                        </div>
+                        <div class="below_middle_control">
+                            <button class="button_control" role="button">ถอยหลัง</button>
+                        </div>
+                    </div>
+                    <div class="right_control">
+                        <button class="button_control" role="button">ขวา</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right_page">
+            <div class="status_bar">
+                <div class="status_microphone">
+                    <div class="microphone-container">
+                        <div class="microphone-status" id="microphone-status">Mic Off</div>
+                    </div>
+                </div>
+                <div class="status_battery">
+                    <div class="battery-container">
+                        <div class="battery-bar" id="battery-bar"></div>
+                        <div class="battery-label" id="battery-label">50%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="status_route">
+                <h3>ตาราง</h3>
+            </div>
+        </div>
+    </div>
 
     <script src="{{ url_for('static', filename='js/test_script.js') }}"></script>
 </body>
