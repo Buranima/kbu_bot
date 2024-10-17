@@ -130,7 +130,7 @@ def f_control_panel_mode(message):
         deleteDataFromQuestionAnswer(message_dictionary)
         result["result"] = requestDataFormDataQuestionAnswer()
 
-    socketio.emit("CONTROI-PANEL", result)
+    socketio.emit("DATA-BASE", result)
 
 # @socketio.on("SERVER-ROS")
 # def f_server_ros_mode(message):
