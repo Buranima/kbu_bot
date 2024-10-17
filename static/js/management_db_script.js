@@ -1,5 +1,6 @@
 var kbu_bot_socket = io();
 var data = {};
+var id = null;
 
 function fetchData() {
     // ส่งคำขอข้อมูลจากฐานข้อมูล โดยกำหนด mode เป็น "read" เพื่อดึงข้อมูล
@@ -10,7 +11,7 @@ function fetchData() {
 // Listen for the data from the server
 kbu_bot_socket.on("DATA-BASE", (on_data_form_database_json) => {
     data = JSON.parse(on_data_form_database_json["result"]);
-    console.log(data); // Debugging output
+    // console.log(data); // Debugging output
 
     // ล้างข้อมูลใน DataTable เดิม
     var table = $('#myTable').DataTable();
@@ -43,7 +44,7 @@ fetchData();
 
 // จัดการคลิกปุ่มแก้ไขข้อมูล
 $(document).on('click', '.editBtn', function() {
-    var id = Number($(this).attr('id')); 
+    id = Number($(this).attr('id')); 
     var row = $(this).closest('tr');
     var question = row.find('td:eq(0)').text(); 
     var answer = row.find('td:eq(1)').text(); 
@@ -59,13 +60,22 @@ $(document).on('click', '.editBtn', function() {
 
 // จัดการเมื่อคลิกปุ่มบันทึกการเปลี่ยนแปลง
 $('#saveChanges').on('click', function() {
+    // รับค่าจากฟิลด์ input
+    var Question = $('#questionInput').val().trim();
+    var Answer = $('#answerInput').val().trim();
+
+    // ตรวจสอบว่าค่าที่กรอกไม่เป็นค่าว่าง
+    if (!Question || !Answer) {
+        alert("กรุณากรอกข้อมูลคำถามและคำตอบให้ครบถ้วน");
+        return;
+    }
     // แสดงโมเดลยืนยันการบันทึกข้อมูล
     $('#confirmSaveModal').modal('show');
 });
 
 // จัดการเมื่อคลิกปุ่มยืนยันการบันทึก
 $('#confirmSave').on('click', function() {
-    var id = Number($('#recordId').val());
+    id = Number($('#recordId').val());
     var updatedQuestion = $('#questionInput').val();
     var updatedAnswer = $('#answerInput').val();
 
@@ -84,7 +94,7 @@ $('#confirmSave').on('click', function() {
     // รอการตอบกลับเพื่อลบหน้าจอโหลด
     kbu_bot_socket.once("DATA-BASE", function(response) {
     hideLoading(); // ซ่อนหน้าจอโหลด
-    console.log(response.message); // แสดงข้อความตอบกลับ
+    // console.log(response); // แสดงข้อความตอบกลับ
     });
 
 });
@@ -103,6 +113,16 @@ $('#addNewRecord').on('click', function() {
 
 // จัดการเมื่อคลิกปุ่มบันทึกการเปลี่ยนแปลง
 $('#saveAdd').on('click', function() {;
+    // รับค่าจากฟิลด์ input
+    var newQuestion = $('#questionInputNew').val().trim();
+    var newAnswer = $('#answerInputNew').val().trim();
+
+    // ตรวจสอบว่าค่าที่กรอกไม่เป็นค่าว่าง
+    if (!newQuestion || !newAnswer) {
+        alert("กรุณากรอกข้อมูลคำถามและคำตอบให้ครบถ้วน");
+        return;
+    }
+
     // แสดงโมเดลยืนยันการบันทึกข้อมูล
     $('#confirmSaveModalAdd').modal('show');
 });
@@ -154,7 +174,7 @@ $('#confirmSaveAdd').on('click', function() {
         // รอการตอบกลับเพื่อลบหน้าจอโหลด
         kbu_bot_socket.once("DATA-BASE", function(response) {
         hideLoading(); // ซ่อนหน้าจอโหลด
-        console.log(response.message); // แสดงข้อความตอบกลับ
+        // console.log(response); // แสดงข้อความตอบกลับ
         });
     }
 });
@@ -185,29 +205,28 @@ $('#confirmSaveAdd').on('click', function() {
 
 // จัดการคลิกปุ่มลบข้อมูล
 $(document).on('click', '.deleteBtn', function() {
-    var id = Number($(this).attr('id'));
     // แสดงโมเดลยืนยันการลบข้อมูล
+    id = Number($(this).attr('id'));
     $('#confirmDeleteModal').modal('show');
+});
 
-    // เมื่อยืนยันการลบ
-    $('#confirmDelete').on('click', function() {
-        var data_form_database_json = {
-            mode: "DATABASE-DELETE",
-            id: id
-        };
-        
-        // ส่งคำขอไปยังเซิร์ฟเวอร์เพื่อลบข้อมูล
-        kbu_bot_socket.emit("DATA-BASE", data_form_database_json);
+// เมื่อยืนยันการลบ
+$('#confirmDelete').on('click', function() {
+    var data_form_database_json = {
+        mode: "DATABASE-DELETE",
+        id: id
+    };
+    // ส่งคำขอไปยังเซิร์ฟเวอร์เพื่อลบข้อมูล
+    kbu_bot_socket.emit("DATA-BASE", data_form_database_json);
 
-        // ปิดโมเดลยืนยันการลบ
-        $('#confirmDeleteModal').modal('hide');
-        showLoading();
+    // ปิดโมเดลยืนยันการลบ
+    $('#confirmDeleteModal').modal('hide');
+    showLoading();
 
-        // รอการตอบกลับเพื่อลบหน้าจอโหลด
-        kbu_bot_socket.once("DATA-BASE", function(response) {
-        hideLoading(); // ซ่อนหน้าจอโหลด
-        console.log(response.message); // แสดงข้อความตอบกลับ
-        });
+    // รอการตอบกลับเพื่อลบหน้าจอโหลด
+    kbu_bot_socket.once("DATA-BASE", function(response) {
+    hideLoading(); // ซ่อนหน้าจอโหลด
+    // console.log(response); // แสดงข้อความตอบกลับ
     });
 });
 

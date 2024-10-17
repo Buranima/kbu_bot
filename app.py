@@ -178,6 +178,6 @@ def f_control_panel_mode(message):
 #         result["result"] = requestDataFormDataQuestionAnswer()
 
 if __name__ == "__main__":
-    threading.Timer(0, startROS).start()
-    threading.Timer(1.25, open_browser).start()
+    # threading.Timer(0, startROS).start()
+    # threading.Timer(1.25, open_browser).start()
     socketio.run(app, debug=False, host="0.0.0.0")

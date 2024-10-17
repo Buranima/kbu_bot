@@ -21,13 +21,25 @@ def f_load_config():
 def f_auto_id():
     global connect_database, cursor_database
     connectDataBase()
-    cursor_database.execute("SELECT MAX(id) FROM data_question_answer")
-    max_id = cursor_database.fetchone()[0]
+    try:
+        cursor_database.execute("SELECT MAX(id) FROM data_question_answer")
+        max_id = cursor_database.fetchone()[0]
+    except mysql.connector.Error as err:
+        # print(f"เกิดข้อผิดพลาด: {err}")
+        return
     if max_id is not None:
-        cursor_database.execute(f"ALTER TABLE data_question_answer AUTO_INCREMENT = {max_id + 1};")
-    connect_database.commit()
-    cursor_database.close()
-    connect_database.close()
+        try:
+            cursor_database.execute(f"ALTER TABLE data_question_answer AUTO_INCREMENT = {max_id + 1};")
+            connect_database.commit()
+        except mysql.connector.Error as err:
+            # print(f"เกิดข้อผิดพลาด: {err}")
+            return
+        finally:
+            cursor_database.close()
+            connect_database.close()
+    else:
+        cursor_database.close()
+        connect_database.close()
 
 def loadQuestionsTokenize(json_database):
     global config_kbubot
@@ -154,6 +166,9 @@ def deleteDataFromQuestionAnswer(delete_data_question_answer_data):
     f_auto_id()
 
 if __name__ == "__main__":
-    # deleteDataFromQuestionAnswer(1)
+    # a = {"id":46}
+    # deleteDataFromQuestionAnswer(a)
+    # a = {"id":46}
+    # deleteDataFromQuestionAnswer(a)
     database_view = requestDataFormDataQuestionAnswer()
     print(database_view)
