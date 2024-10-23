@@ -152,16 +152,17 @@ def f_server_ros_mode(message):
     # message_dictionary = json.loads(message_json)
     message_dictionary = message
     print(f"กำลังทำงาน... {message_dictionary['mode']}\n")
-    print(message_dictionary)
-    # result = {
-    #     "mode": message_dictionary["mode"],
-    #     "result": None
-    # }
+    
+    result = {
+        "mode": message_dictionary["mode"],
+        "result": None
+    }
 
-    # if str(message_dictionary["mode"]) == "BATTERY":
-    #     result["result"] = message_dictionary["result"]
+    if str(message_dictionary["mode"]) == "BATTERY":
+        f_update_config("battery", message_dictionary["result"])
+        result["result"] = f_read_config()
 
-    # socketio.emit("SERVER-CONTROL-PANEL", result)
+    socketio.emit("SERVER-CONTROL-PANEL", result)
 
 @socketio.on("SERVER-CONTROL-PANEL")
 def f_server_controi_panel_mode(message):

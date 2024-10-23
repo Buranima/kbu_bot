@@ -31,7 +31,7 @@ function setBatteryLevel(level) {
     batteryLabel.textContent = "Battery " + level + '%';
 }
 
-setBatteryLevel(40);
+// setBatteryLevel(40);
 
 function setMicrophoneStatus(isMicOn) {
     var micStatus = document.getElementById('microphone-status');
@@ -58,6 +58,8 @@ function toggleLight(buttonId, isLightOn) {
 
 kbu_bot_socket.on("SERVER-CONTROL-PANEL", (on_data_form_database_json) => {
     data = on_data_form_database_json["result"]
+
+    setBatteryLevel(data["battery"]);
 
     var table = $('#routes-table').DataTable();
     table.clear();
