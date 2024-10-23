@@ -7,6 +7,7 @@ var button_f = document.getElementById('forward-button');
 var button_s = document.getElementById('stop-button');
 var button_b = document.getElementById('backward-button');
 var button_r = document.getElementById('right-button');
+var status_route = 0;
 
 function fetchData() {
     data_form_database_json = { mode: "READ-DATA" };
@@ -80,51 +81,112 @@ kbu_bot_socket.on("SERVER-CONTROL-PANEL", (on_data_form_database_json) => {
     }
     table.draw();
 
-    if (data["status"] == "stop") {
+    for (let i = 0; i < data["status-route"].length; i++) {
+        if (data["status-route"][i] == "กำลังใช้งาน") {
+            status_route = 1;
+            break;
+        }
+    }
+    
+    if (status_route == 1) {
+        if (data["status"] == "stop") {
+            toggleLight('left-button', true);
+            toggleLight('forward-button', true);
+            toggleLight('stop-button', true);
+            toggleLight('backward-button', true);
+            toggleLight('right-button', true);
+        }
+        else {
+            if (data["control"] == "stop") {
+                toggleLight('left-button', false);
+                toggleLight('forward-button', false);
+                toggleLight('stop-button', true);
+                toggleLight('backward-button', false);
+                toggleLight('right-button', false);
+            }
+            else if (data["control"] == "left") {
+                toggleLight('left-button', false);
+                toggleLight('forward-button', true);
+                toggleLight('stop-button', false);
+                toggleLight('backward-button', true);
+                toggleLight('right-button', true);
+            }
+            else if (data["control"] == "forward") {
+                toggleLight('left-button', true);
+                toggleLight('forward-button', false);
+                toggleLight('stop-button', false);
+                toggleLight('backward-button', true);
+                toggleLight('right-button', true);
+            }
+            else if (data["control"] == "backward") {
+                toggleLight('left-button', true);
+                toggleLight('forward-button', true);
+                toggleLight('stop-button', false);
+                toggleLight('backward-button', false);
+                toggleLight('right-button', true);
+            }
+            else if (data["control"] == "right") {
+                toggleLight('left-button', true);
+                toggleLight('forward-button', true);
+                toggleLight('stop-button', false);
+                toggleLight('backward-button', true);
+                toggleLight('right-button', false);
+            }
+        }
+    }
+    else {
         toggleLight('left-button', true);
         toggleLight('forward-button', true);
         toggleLight('stop-button', true);
         toggleLight('backward-button', true);
         toggleLight('right-button', true);
     }
-    else {
-        if (data["control"] == "stop") {
-            toggleLight('left-button', false);
-            toggleLight('forward-button', false);
-            toggleLight('stop-button', true);
-            toggleLight('backward-button', false);
-            toggleLight('right-button', false);
-        }
-        else if (data["control"] == "left") {
-            toggleLight('left-button', false);
-            toggleLight('forward-button', true);
-            toggleLight('stop-button', false);
-            toggleLight('backward-button', true);
-            toggleLight('right-button', true);
-        }
-        else if (data["control"] == "forward") {
-            toggleLight('left-button', true);
-            toggleLight('forward-button', false);
-            toggleLight('stop-button', false);
-            toggleLight('backward-button', true);
-            toggleLight('right-button', true);
-        }
-        else if (data["control"] == "backward") {
-            toggleLight('left-button', true);
-            toggleLight('forward-button', true);
-            toggleLight('stop-button', false);
-            toggleLight('backward-button', false);
-            toggleLight('right-button', true);
-        }
-        else if (data["control"] == "right") {
-            toggleLight('left-button', true);
-            toggleLight('forward-button', true);
-            toggleLight('stop-button', false);
-            toggleLight('backward-button', true);
-            toggleLight('right-button', false);
-        }
-    }
-    
+
+    // if (data["status"] == "stop") {
+    //     toggleLight('left-button', true);
+    //     toggleLight('forward-button', true);
+    //     toggleLight('stop-button', true);
+    //     toggleLight('backward-button', true);
+    //     toggleLight('right-button', true);
+    // }
+    // else {
+    //     if (data["control"] == "stop") {
+    //         toggleLight('left-button', false);
+    //         toggleLight('forward-button', false);
+    //         toggleLight('stop-button', true);
+    //         toggleLight('backward-button', false);
+    //         toggleLight('right-button', false);
+    //     }
+    //     else if (data["control"] == "left") {
+    //         toggleLight('left-button', false);
+    //         toggleLight('forward-button', true);
+    //         toggleLight('stop-button', false);
+    //         toggleLight('backward-button', true);
+    //         toggleLight('right-button', true);
+    //     }
+    //     else if (data["control"] == "forward") {
+    //         toggleLight('left-button', true);
+    //         toggleLight('forward-button', false);
+    //         toggleLight('stop-button', false);
+    //         toggleLight('backward-button', true);
+    //         toggleLight('right-button', true);
+    //     }
+    //     else if (data["control"] == "backward") {
+    //         toggleLight('left-button', true);
+    //         toggleLight('forward-button', true);
+    //         toggleLight('stop-button', false);
+    //         toggleLight('backward-button', false);
+    //         toggleLight('right-button', true);
+    //     }
+    //     else if (data["control"] == "right") {
+    //         toggleLight('left-button', true);
+    //         toggleLight('forward-button', true);
+    //         toggleLight('stop-button', false);
+    //         toggleLight('backward-button', true);
+    //         toggleLight('right-button', false);
+    //     }
+    // }
+
     setMicrophoneStatus(data["microphone"]);
 });
 

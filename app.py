@@ -12,8 +12,7 @@ from text_to_speech import textToSpeech
 from database import requestDataFormDataQuestionAnswer, updateDataFormDataQuestionAnswer, insertDataToQuestionAnswer, deleteDataFromQuestionAnswer
 from analyze_questions import findAnswer
 from search_by_typhoon import chatByTyphoon, setLatestQuestionsByTyphoon
-# from microphone import check_microphone
-from ros import f_read_config, f_update_config, f_update_config_arry, f_default, f_route
+from ros import f_read_config, f_update_config, f_default, f_route
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -113,7 +112,7 @@ def f_KBU_mode(message):
         return
     
     elif str(message_dictionary["mode"]) == "COMMAND":
-        f_update_config("command", message_dictionary["command"])
+        # f_update_config("command", message_dictionary["command"])
         result["result"] = message_dictionary["command"]
         socketio.emit("SERVER-ROS", result)
         return
@@ -220,6 +219,6 @@ def f_server_controi_panel_mode(message):
 
 if __name__ == "__main__":
     f_default()
-    threading.Timer(0, startROS).start()
-    threading.Timer(1, open_browser).start()
+    # threading.Timer(0, startROS).start()
+    # threading.Timer(1, open_browser).start()
     socketio.run(app, debug=False, host="0.0.0.0")

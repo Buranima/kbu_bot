@@ -44,14 +44,5 @@
                 0.0
             ]
         ]
-    ],
-    "status-route": [
-        "ใช้งาน",
-        "ใช้งาน"
-    ],
-    "status": "start",
-    "control": "stop",
-    "command": "dance",
-    "battery": 0,
-    "microphone": true
+    ]
 }
