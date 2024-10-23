@@ -148,9 +148,7 @@ def f_control_panel_mode(message):
 
 @socketio.on("SERVER-ROS")
 def f_server_ros_mode(message):
-    # message_json = json.dumps(message, ensure_ascii=False)
-    # message_dictionary = json.loads(message_json)
-    message_dictionary = message
+    message_dictionary = json.loads(message)
     print(f"กำลังทำงาน... {message_dictionary['mode']}\n")
     
     result = {
