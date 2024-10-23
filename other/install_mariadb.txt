@@ -25,3 +25,5 @@ services:
     restart: always
 
 docker-compose up -d
+
+sudo apt install mariadb-client
