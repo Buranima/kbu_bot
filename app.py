@@ -146,21 +146,22 @@ def f_control_panel_mode(message):
 
     socketio.emit("DATA-BASE", result)
 
-# @socketio.on("SERVER-ROS")
-# def f_server_ros_mode(message):
-#     # message_json = json.dumps(message, ensure_ascii=False)
-#     # message_dictionary = json.loads(message_json)
-#     message_dictionary = message
-#     print(f"กำลังทำงาน... {message_dictionary['mode']}\n")
-#     result = {
-#         "mode": message_dictionary["mode"],
-#         "result": None
-#     }
+@socketio.on("SERVER-ROS")
+def f_server_ros_mode(message):
+    # message_json = json.dumps(message, ensure_ascii=False)
+    # message_dictionary = json.loads(message_json)
+    message_dictionary = message
+    print(f"กำลังทำงาน... {message_dictionary['mode']}\n")
+    print(message_dictionary)
+    # result = {
+    #     "mode": message_dictionary["mode"],
+    #     "result": None
+    # }
 
-#     if str(message_dictionary["mode"]) == "BATTERY":
-#         result["result"] = message_dictionary["result"]
+    # if str(message_dictionary["mode"]) == "BATTERY":
+    #     result["result"] = message_dictionary["result"]
 
-#     socketio.emit("SERVER-CONTROL-PANEL", result)
+    # socketio.emit("SERVER-CONTROL-PANEL", result)
 
 @socketio.on("SERVER-CONTROL-PANEL")
 def f_server_controi_panel_mode(message):
