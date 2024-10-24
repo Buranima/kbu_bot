@@ -35,7 +35,7 @@ kbu_bot_socket.on("DATA-BASE", (on_data_form_database_json) => {
     
 });
 
-// เรียกใช้งาน fetchData() ทุกๆ 30 วินาที (30000 milliseconds)
+//fetchData() ทุกๆ 1 นาที
 setInterval(fetchData, 100000);
 
 // เรียก fetchData ครั้งแรกเมื่อโหลดหน้าเพจ
@@ -56,10 +56,16 @@ $(document).on('click', '.editBtn', function() {
 
     // แสดงโมเดลแก้ไขข้อมูล
     $('#editModal').modal('show');
+    $('#questionInput').focus();
+});
+
+$('#editModal').on('shown.bs.modal', function () {
+    $('#questionInput').focus();
 });
 
 // จัดการเมื่อคลิกปุ่มบันทึกการเปลี่ยนแปลง
 $('#saveChanges').on('click', function() {
+    $('#questionInput').focus();
     // รับค่าจากฟิลด์ input
     var Question = $('#questionInput').val().trim();
     var Answer = $('#answerInput').val().trim();
@@ -109,10 +115,17 @@ $('#addNewRecord').on('click', function() {
 
     // แสดงโมเดลเพิ่มข้อมูลใหม่
     $('#addModal').modal('show');
+    $('#questionInputNew').focus();
+
+});
+
+$('#addModal').on('shown.bs.modal', function () {
+    $('#questionInputNew').focus();
 });
 
 // จัดการเมื่อคลิกปุ่มบันทึกการเปลี่ยนแปลง
-$('#saveAdd').on('click', function() {;
+$('#saveAdd').on('click', function() {
+    $('#questionInputNew').focus();
     // รับค่าจากฟิลด์ input
     var newQuestion = $('#questionInputNew').val().trim();
     var newAnswer = $('#answerInputNew').val().trim();
@@ -120,6 +133,15 @@ $('#saveAdd').on('click', function() {;
     // ตรวจสอบว่าค่าที่กรอกไม่เป็นค่าว่าง
     if (!newQuestion || !newAnswer) {
         alert("กรุณากรอกข้อมูลคำถามและคำตอบให้ครบถ้วน");
+        return;
+    }
+
+    // ตรวจสอบว่ามีตัวอักษรที่ไม่ใช่ช่องว่างอย่างน้อย 10 ตัว
+    var regEx = /[a-zA-Zก-๙]/g; // ตรวจสอบเฉพาะตัวอักษรไทยและอังกฤษ
+    var characterCount = (newQuestion.match(regEx) || []).length;
+
+    if (characterCount < 10) {
+        alert("คำถามไม่ควรมีแค่ตัวเลขอย่างเดียว");
         return;
     }
 
